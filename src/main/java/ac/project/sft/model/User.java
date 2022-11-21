@@ -7,9 +7,10 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 
 @Entity
-@Where(clause = "valid = 1")
+@Where(clause = "valid = true")
 @Getter
 @Setter
+@Table(name="users")
 public class User {
 
     @Id
