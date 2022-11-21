@@ -5,6 +5,9 @@ import ac.project.sft.model.*;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface DtoMapper {
@@ -19,8 +22,11 @@ public interface DtoMapper {
     TransactionDto transactionToDto(Transaction transaction);
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="account",target="accountDto")
-    @Mapping(source="user",target="userDto")
     UserAccountDto userAccountToDto(UserAccount userAccount);
+
+    @BeanMapping(ignoreByDefault = false)
+    List<UserAccountDto> userAccountsToDtos(List<UserAccount> userAccountList);
+
     @BeanMapping(ignoreByDefault = false)
     @Mapping(target="password",ignore = true)
     UserDto userToDto(User user);
@@ -37,7 +43,6 @@ public interface DtoMapper {
     Transaction dtoToTransaction(TransactionDto transaction);
     //@Mapping(target = "account",source= "accountDto")
     @BeanMapping(ignoreByDefault = false)
-    @Mapping(source = "userDto",target="user")
     @Mapping(source = "accountDto",target="account")
     UserAccount dtoToUserAccount(UserAccountDto userAccount);
     @BeanMapping(ignoreByDefault = false)

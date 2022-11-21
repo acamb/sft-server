@@ -3,6 +3,7 @@ package ac.project.sft.model;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 
@@ -21,4 +22,6 @@ public class User {
     private String username;
     private String password;
     private boolean valid = true;
+
+
 }

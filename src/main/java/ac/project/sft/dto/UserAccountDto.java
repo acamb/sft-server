@@ -13,5 +13,4 @@ public class UserAccountDto {
     private Boolean write;
     private Boolean owner;
     private AccountDto accountDto;
-    private UserDto userDto;
 }
