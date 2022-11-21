@@ -9,12 +9,12 @@ import java.util.Date;
 @Getter
 @Setter
 public class ScheduledTransactionDto {
-    Long id;
-    Date date;
-    BigDecimal amount;
-    Boolean recurrent;
-    RecurrentType type;
-    Date endDate;
-    Integer dayOfMonth; //end of month?
-    Integer dayOfWeek;
+    private Long id;
+    private Date date;
+    private BigDecimal amount;
+    private Boolean recurrent;
+    private RecurrentType type;
+    private Date endDate;
+    private Integer dayOfMonth; //end of month?
+    private Integer dayOfWeek;
 }

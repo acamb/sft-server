@@ -17,10 +17,10 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Version
-    Long version;
-    BigDecimal balance;
-    String description;
-    boolean valid = true;
+    private Long version;
+    private BigDecimal balance;
+    private String description;
+    private boolean valid = true;
 }

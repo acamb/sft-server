@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 @Setter
 public class AccountDto {
 
-    Long id;
-    Long version;
-    BigDecimal balance;
-    String description;
+    private Long id;
+    private Long version;
+    private BigDecimal balance;
+    private String description;
 
 }

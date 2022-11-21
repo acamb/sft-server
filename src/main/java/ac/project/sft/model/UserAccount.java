@@ -15,15 +15,15 @@ public class UserAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Version
-    Long version;
-    Boolean read;
-    Boolean write;
-    Boolean owner;
+    private Long version;
+    private Boolean read;
+    private Boolean write;
+    private Boolean owner;
     @ManyToOne
-    Account account;
+    private Account account;
     @ManyToOne
-    User user;
-    boolean valid = true;
+    private User user;
+    private boolean valid = true;
 }

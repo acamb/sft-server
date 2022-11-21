@@ -16,16 +16,16 @@ import java.util.Date;
 public class ScheduledTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Version
-    Long version;
-    Date date;
-    BigDecimal amount;
-    Boolean recurrent;
+    private Long version;
+    private Date date;
+    private BigDecimal amount;
+    private Boolean recurrent;
     @Enumerated(EnumType.STRING)
-    RecurrentType type;
-    Date endDate;
-    Integer dayOfMonth; //end of month?
-    Integer dayOfWeek;
+    private  RecurrentType type;
+    private Date endDate;
+    private  Integer dayOfMonth; //end of month?
+    private Integer dayOfWeek;
     boolean valid = true;
 }

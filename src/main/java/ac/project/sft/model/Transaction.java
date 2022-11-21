@@ -16,14 +16,14 @@ import java.util.Date;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private  Long id;
     @Version
-    Long version;
-    Date date;
-    BigDecimal amount;
-    BigDecimal previousAmount;
+    private Long version;
+    private Date date;
+    private  BigDecimal amount;
+    private BigDecimal previousAmount;
     @ManyToOne
-    Category category;
-    String note;
+    private  Category category;
+    private  String note;
 
 }

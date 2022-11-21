@@ -9,11 +9,11 @@ import java.util.Date;
 @Getter
 @Setter
 public class TransactionDto {
-    Long id;
-    Date date;
-    BigDecimal amount;
-    BigDecimal previousAmount;
-    CategoryDto categoryDto;
-    String note;
+    private Long id;
+    private Date date;
+    private BigDecimal amount;
+    private BigDecimal previousAmount;
+    private CategoryDto categoryDto;
+    private String note;
 
 }

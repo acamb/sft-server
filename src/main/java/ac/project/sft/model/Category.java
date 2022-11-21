@@ -14,10 +14,10 @@ import javax.persistence.*;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Version
-    Long version;
-    String name;
-    String description;
-    boolean valid = true;
+    private Long version;
+    private String name;
+    private String description;
+    private boolean valid = true;
 }

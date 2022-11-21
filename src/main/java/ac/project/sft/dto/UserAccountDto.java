@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 public class UserAccountDto {
 
-    Long id;
-    Boolean read;
-    Boolean write;
-    Boolean owner;
-    AccountDto accountDto;
-    UserDto user;
+    private Long id;
+    private Boolean read;
+    private Boolean write;
+    private Boolean owner;
+    private AccountDto accountDto;
+    private UserDto userDto;
 }
