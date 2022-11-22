@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Where(clause = "valid = true")
-@SQLDelete(sql="UPDATE scheduled_transaction set valid = 0 where id = ?")
+@SQLDelete(sql="UPDATE scheduled_transaction set valid = false where id = ? and version = ?")
 public class ScheduledTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,8 @@ public class ScheduledTransaction {
     private Date endDate;
     private  Integer dayOfMonth; //end of month?
     private Integer dayOfWeek;
-    boolean valid = true;
+    private boolean valid = true;
+    @ManyToOne
     private Wallet wallet;
     @ManyToOne
     private Category category;

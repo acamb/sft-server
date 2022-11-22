@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @Where(clause = "valid = true")
-@SQLDelete(sql="UPDATE user_wallet set valid = 0 where id = ?")
+@SQLDelete(sql="UPDATE user_wallet set valid = FALSE where id=? and version = ?")
 public class UserWallet {
 
     @Id

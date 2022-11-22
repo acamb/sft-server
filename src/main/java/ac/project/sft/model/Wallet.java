@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Where(clause = "valid = true")
-@SQLDelete(sql="UPDATE wallet set valid = 0 where id = ?")
+@SQLDelete(sql="UPDATE wallet set valid = false where id = ? and version = ?")
 public class Wallet {
 
     @Id

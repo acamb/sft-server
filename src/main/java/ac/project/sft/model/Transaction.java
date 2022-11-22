@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Where(clause = "valid = true")
-@SQLDelete(sql="UPDATE transaction set valid = 0 where id = ?")
+@SQLDelete(sql="UPDATE transaction set valid = false where id = ? and version = ?")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +31,7 @@ public class Transaction {
     @ManyToOne
     private  Category category;
     private  String note;
+    @ManyToOne
     private User user;
     @ManyToOne
     @NotNull

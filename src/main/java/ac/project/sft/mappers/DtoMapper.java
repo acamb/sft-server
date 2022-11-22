@@ -10,54 +10,54 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface DtoMapper {
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     WalletDto walletToDto(Wallet wallet);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     CategoryDto categoryToDto(Category category);
 
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     List<CategoryDto> categoryListToDto(List<Category> category);
 
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(source="category",target="categoryDto")
     ScheduledTransactionDto scheduledTransactionToDto(ScheduledTransaction scheduledTransaction);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(source="category",target="categoryDto")
     @Mapping(source="user",target="userDto")
     TransactionDto transactionToDto(Transaction transaction);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(source="wallet",target="walletDto")
     UserWalletDto userWalletToDto(UserWallet userWallet);
 
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     List<UserWalletDto> userWalletsToDtos(List<UserWallet> userWalletList);
 
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(target="password",ignore = true)
     UserDto userToDto(User user);
 
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     List<UserDto> userListToDto(List<User> user);
 
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     Wallet dtoToWallet(WalletDto wallet);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     Category dtoToCategory(CategoryDto category);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(source="categoryDto",target="category")
     ScheduledTransaction dtoToScheduledTransaction(ScheduledTransactionDto scheduledTransaction);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(source="categoryDto",target="category")
     @Mapping(source="userDto",target="user")
     Transaction dtoToTransaction(TransactionDto transaction);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(source = "walletDto",target="wallet")
     UserWallet dtoToUserWallet(UserWalletDto userWalletDto);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     User dtoToUser(UserDto user);
 
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     List<TransactionDto> transactionListToDto(List<Transaction> all);
-    @BeanMapping
+    @BeanMapping(ignoreByDefault = false)
     List<ScheduledTransactionDto> scheduledTransactionListToDto(List<ScheduledTransaction> scheduledTransactionList);
 }

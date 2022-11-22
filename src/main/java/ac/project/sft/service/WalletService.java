@@ -54,7 +54,7 @@ public class WalletService {
 
     @Transactional
     public Wallet updateBalance(@Valid Wallet wallet, BigDecimal amount){
-        wallet.setBalance(wallet.getBalance().subtract(amount));
+        wallet.setBalance(wallet.getBalance().add(amount));
         if(wallet.getBalance().compareTo(BigDecimal.ZERO) < 0){
             throw new BadRequestException("balance.lesser.zero");
         }
@@ -64,8 +64,10 @@ public class WalletService {
 
     @Transactional
     public void deleteWallet(Wallet wallet){
-        walletRepository.delete(wallet);
+
         userWalletService.deleteFor(wallet);
+        walletRepository.delete(wallet);
+
     }
 
     @Transactional

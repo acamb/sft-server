@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @Where(clause = "valid = true")
-@SQLDelete(sql="UPDATE category set valid = 0 where id = ?")
+@SQLDelete(sql="UPDATE category set valid = false where id = ? and version = ?")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

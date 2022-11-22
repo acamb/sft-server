@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @Table(name="users")
-@SQLDelete(sql="UPDATE user set valid = 0 where id = ?")
+@SQLDelete(sql="UPDATE user set valid = false where id = ? and version = ?")
 public class User {
 
     @Id
