@@ -6,11 +6,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserAccountDto {
+public class UserWalletDto {
 
     private Long id;
     private Boolean read;
     private Boolean write;
     private Boolean owner;
-    private AccountDto accountDto;
+    private WalletDto walletDto;
 }

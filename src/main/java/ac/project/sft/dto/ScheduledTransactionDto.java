@@ -17,4 +17,5 @@ public class ScheduledTransactionDto {
     private Date endDate;
     private Integer dayOfMonth; //end of month?
     private Integer dayOfWeek;
+    private CategoryDto categoryDto;
 }

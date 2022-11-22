@@ -16,4 +16,6 @@ public class TransactionDto {
     private CategoryDto categoryDto;
     private String note;
 
+    private UserDto userDto;
+
 }

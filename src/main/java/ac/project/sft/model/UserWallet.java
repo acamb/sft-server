@@ -3,15 +3,18 @@ package ac.project.sft.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
 @Setter
-@Where(clause = "valid = 1")
-public class UserAccount {
+@Where(clause = "valid = true")
+@SQLDelete(sql="UPDATE user_wallet set valid = 0 where id = ?")
+public class UserWallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +25,10 @@ public class UserAccount {
     private Boolean write;
     private Boolean owner;
     @ManyToOne
-    private Account account;
+    @NotNull
+    private Wallet wallet;
     @ManyToOne
+    @NotNull
     private User user;
     private boolean valid = true;
 }
