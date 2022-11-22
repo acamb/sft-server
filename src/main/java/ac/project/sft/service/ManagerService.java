@@ -13,11 +13,13 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Validated
 public class ManagerService {
 
+    public static final String NO_GRANTS = "user.has.not.grants";
     @Autowired
     TransactionService transactionService;
     @Autowired
@@ -31,31 +33,31 @@ public class ManagerService {
     @Transactional
     public void addTransaction(Long walletId, String username,TransactionDto transactionDto){
         UserWallet userWallet = walletService.getWallet(walletId,username);
-        if(userWallet.getWrite() || userWallet.getOwner()){
+        if(canWrite(userWallet)){
             addTransaction(userWallet.getWallet(),mapper.dtoToTransaction(transactionDto),userWallet.getUser());
         }
         else{
-            throw new NotAuthorizedException("user.has.not.grants");
+            throw new NotAuthorizedException(NO_GRANTS);
         }
     }
     @Transactional
-    public Wallet addTransaction(@Valid Wallet wallet,@Valid Transaction transaction,@Valid User user){
+    public void addTransaction(@Valid Wallet wallet,@Valid Transaction transaction,@Valid User user){
         transaction.setPreviousAmount(wallet.getBalance());
         transaction.setUser(user);
         transaction = transactionService.create(transaction);
-        return walletService.updateBalance(wallet,transaction.getAmount());
+        walletService.updateBalance(wallet,transaction.getAmount());
     }
 
     @Transactional
     public void removeTransaction(Long walletId, String username,TransactionDto transactionDto){
         UserWallet userWallet = walletService.getWallet(walletId,username);
-        if(userWallet.getWrite() || userWallet.getOwner()){
+        if(canWrite(userWallet)){
             Transaction transaction = transactionService.get(transactionDto.getId());
             walletService.updateBalance(userWallet.getWallet(),transaction.getAmount().multiply(BigDecimal.valueOf(-1)));
             transactionService.delete(transaction);
         }
         else{
-            throw new NotAuthorizedException("user.has.not.grants");
+            throw new NotAuthorizedException(NO_GRANTS);
         }
     }
 
@@ -71,5 +73,68 @@ public class ManagerService {
         Wallet wallet = walletService.getWallet(scheduledTransaction.getWallet().getId());
         addTransaction(wallet,transaction,null);
     }
+    
+    @Transactional
+    public ScheduledTransaction addScheduled(@Valid Wallet wallet,@Valid ScheduledTransaction scheduledTransaction,String username){
+        UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
+        if(canWrite(userWallet)){
+            scheduledTransaction.setWallet(wallet);
+            return scheduledTransactionService.create(scheduledTransaction);
+        }
+        else{
+            throw new NotAuthorizedException(NO_GRANTS);
+        }
+    }
 
+    @Transactional
+    public ScheduledTransaction updateScheduled(@Valid Wallet wallet,@Valid ScheduledTransaction scheduledTransaction,String username){
+        UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
+        if(canWrite(userWallet)){
+            scheduledTransaction.setWallet(wallet);
+            return scheduledTransactionService.update(scheduledTransaction);
+        }
+        else{
+            throw new NotAuthorizedException(NO_GRANTS);
+        }
+    }
+
+    @Transactional
+    public void deleteScheduled(@Valid Wallet wallet,@Valid ScheduledTransaction scheduledTransaction,String username){
+        UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
+        if(canWrite(userWallet)){
+            scheduledTransaction.setWallet(wallet);
+            scheduledTransactionService.delete(scheduledTransaction);
+        }
+        else{
+            throw new NotAuthorizedException(NO_GRANTS);
+        }
+    }
+
+    public List<ScheduledTransaction> getAllScheduled(Long walletId,String username){
+        UserWallet userWallet = walletService.getWallet(walletId,username);
+        if(canWrite(userWallet)){
+            return scheduledTransactionService.getAll(userWallet.getWallet());
+        }
+        else{
+            throw new NotAuthorizedException(NO_GRANTS);
+        }
+    }
+
+    public List<Transaction> getAllTransactions(@Valid Wallet wallet,String username){
+        UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
+        if(canWrite(userWallet)){
+            return transactionService.getAll(wallet);
+        }
+        else{
+            throw new NotAuthorizedException(NO_GRANTS);
+        }
+    }
+    
+    public static boolean canWrite(UserWallet wallet){
+        return wallet.getWrite() || wallet.getOwner();
+    }
+
+    public static boolean canRead(UserWallet wallet){
+        return wallet.getRead() || wallet.getOwner();
+    }
 }

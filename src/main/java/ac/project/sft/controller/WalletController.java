@@ -1,5 +1,7 @@
 package ac.project.sft.controller;
 
+import ac.project.sft.controller.payloads.request.AssociateWalletPayload;
+import ac.project.sft.controller.payloads.request.DeleteWalletAssociationPayload;
 import ac.project.sft.dto.WalletDto;
 import ac.project.sft.dto.UserWalletDto;
 import ac.project.sft.mappers.DtoMapper;
@@ -22,26 +24,55 @@ public class WalletController {
 
     @GetMapping("/:id")
     @ResponseStatus(HttpStatus.OK)
-    UserWalletDto getWallet(@PathVariable("id") Long id, Authentication authentication){
+    public UserWalletDto getWallet(@PathVariable("id") Long id, Authentication authentication){
         return mapper.userWalletToDto(walletService.getWallet(id,authentication.getName()));
     }
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    List<UserWalletDto> getWallets(Authentication authentication){
+    public List<UserWalletDto> getWallets(Authentication authentication){
         return mapper.userWalletsToDtos(walletService.getWallets(authentication.getName()));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    UserWalletDto createWallet(@RequestBody WalletDto walletDto, Authentication authentication){
-        return mapper.userWalletToDto(walletService.createWallet(walletDto,authentication.getName()));
+    public UserWalletDto createWallet(@RequestBody WalletDto walletDto, Authentication authentication){
+        return mapper.userWalletToDto(walletService.createWallet(mapper.dtoToWallet(walletDto),authentication.getName()));
     }
 
     @DeleteMapping("/:id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteWallet(@PathVariable("id") Long id){
+    public void deleteWallet(@PathVariable("id") Long id){
         walletService.deleteWallet(id);
     }
 
+    @PostMapping("/association")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserWalletDto associate(@RequestBody AssociateWalletPayload payload) {
+        return mapper.userWalletToDto(
+                walletService.associateWallet(mapper.dtoToWallet(payload.getWalletDto()),
+                payload.getUsername(),
+                payload.getRead(),
+                payload.getWrite(),
+                payload.getOwner())
+        );
+    }
+
+    @PutMapping("/association")
+    public UserWalletDto modifyAssociation(@RequestBody AssociateWalletPayload payload) {
+        return mapper.userWalletToDto(
+                walletService.modifyAssociation(mapper.dtoToWallet(payload.getWalletDto()),
+                payload.getUsername(),
+                payload.getRead(),
+                payload.getWrite(),
+                payload.getOwner())
+        );
+    }
+
+    @DeleteMapping("/association")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAssociation(@RequestBody DeleteWalletAssociationPayload payload) {
+        walletService.deleteAssociation(mapper.dtoToWallet(payload.getWalletDto()),
+                payload.getUsername());
+    }
 }

@@ -55,4 +55,9 @@ public interface DtoMapper {
     UserWallet dtoToUserWallet(UserWalletDto userWalletDto);
     @BeanMapping
     User dtoToUser(UserDto user);
+
+    @BeanMapping
+    List<TransactionDto> transactionListToDto(List<Transaction> all);
+    @BeanMapping
+    List<ScheduledTransactionDto> scheduledTransactionListToDto(List<ScheduledTransaction> scheduledTransactionList);
 }

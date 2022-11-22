@@ -1,6 +1,5 @@
 package ac.project.sft.service;
 
-import ac.project.sft.dto.WalletDto;
 import ac.project.sft.exceptions.BadRequestException;
 import ac.project.sft.exceptions.NotFoundException;
 import ac.project.sft.mappers.DtoMapper;
@@ -24,8 +23,6 @@ public class WalletService {
     WalletRepository walletRepository;
     @Autowired
     UserWalletService userWalletService;
-    @Autowired
-    DtoMapper mapper;
 
     public UserWallet getWallet(Long id, String username){
         Wallet wallet =  walletRepository.findById(id).orElseThrow(()->new NotFoundException(NOT_FOUND_KEY));
@@ -41,14 +38,20 @@ public class WalletService {
     }
 
     @Transactional
-    public UserWallet createWallet(@Valid WalletDto dto, String username){
-        if(dto.getId() != null){
+    public UserWallet createWallet(@Valid Wallet wallet, String username){
+        if(wallet.getId() != null){
             throw new BadRequestException("wallet.exists");
         }
-        Wallet wallet = mapper.dtoToWallet(dto);
         wallet = walletRepository.save(wallet);
         return userWalletService.create(wallet,username);
     }
+
+    @Transactional
+    public UserWallet associateWallet(@Valid Wallet wallet,String username,Boolean read,Boolean write,Boolean owner){
+        userWalletService.create(wallet,username);
+        return userWalletService.modifyGrants(wallet,username,read,write,owner);
+    }
+
     @Transactional
     public Wallet updateBalance(@Valid Wallet wallet, BigDecimal amount){
         wallet.setBalance(wallet.getBalance().subtract(amount));
@@ -62,12 +65,20 @@ public class WalletService {
     @Transactional
     public void deleteWallet(Wallet wallet){
         walletRepository.delete(wallet);
+        userWalletService.deleteFor(wallet);
     }
 
     @Transactional
     public void deleteWallet(Long id){
         Wallet wallet = walletRepository.findById(id).orElseThrow(()-> new NotFoundException(NOT_FOUND_KEY));
-        walletRepository.delete(wallet);
-        userWalletService.deleteFor(wallet);
+        deleteWallet(wallet);
+    }
+
+    public UserWallet modifyAssociation(@Valid Wallet wallet, String username, Boolean read, Boolean write, Boolean owner) {
+        return userWalletService.modifyGrants(wallet,username,read,write,owner);
+    }
+
+    public void deleteAssociation(@Valid Wallet wallet, String username) {
+        userWalletService.deassociate(wallet,username);
     }
 }
