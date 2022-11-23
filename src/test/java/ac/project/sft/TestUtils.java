@@ -1,10 +1,13 @@
 package ac.project.sft;
 
+import ac.project.sft.model.ScheduledTransaction;
+import ac.project.sft.model.Transaction;
 import ac.project.sft.model.User;
 import ac.project.sft.model.Wallet;
 import ac.project.sft.repository.UserRepository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class TestUtils {
 
@@ -16,10 +19,24 @@ public class TestUtils {
         return userRepository.save(user);
     }
 
-    public static Wallet createTestWallet(){
+    public static Wallet createTestWallet(BigDecimal balance){
         Wallet newWallet = new Wallet();
-        newWallet.setBalance(BigDecimal.valueOf(10));
+        newWallet.setBalance(balance);
         newWallet.setDescription("test");
         return newWallet;
+    }
+
+    public static Transaction createTransaction(BigDecimal amount){
+        Transaction transaction = new Transaction();
+        transaction.setDate(new Date());
+        transaction.setAmount(amount);
+        return transaction;
+    }
+
+    public static ScheduledTransaction createScheduledTransaction(BigDecimal amount){
+        ScheduledTransaction transaction = new ScheduledTransaction();
+        transaction.setDate(new Date());
+        transaction.setAmount(amount);
+        return transaction;
     }
 }

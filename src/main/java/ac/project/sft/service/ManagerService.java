@@ -6,7 +6,6 @@ import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
@@ -40,10 +39,11 @@ public class ManagerService {
             throw new NotAuthorizedException(NO_GRANTS);
         }
     }
-    @Transactional
-    public void addTransaction(@Valid Wallet wallet,@Valid Transaction transaction,@Valid User user){
+
+    private void addTransaction(@Valid Wallet wallet,@Valid Transaction transaction,@Valid User user){
         transaction.setPreviousAmount(wallet.getBalance());
         transaction.setUser(user);
+        transaction.setWallet(wallet);
         transaction = transactionService.create(transaction);
         walletService.updateBalance(wallet,transaction.getAmount());
     }
@@ -61,7 +61,7 @@ public class ManagerService {
         }
     }
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional
     public void processScheduledTransaction(@Valid ScheduledTransaction scheduledTransaction){
         Transaction transaction = new Transaction();
         transaction.setDate(new Date());

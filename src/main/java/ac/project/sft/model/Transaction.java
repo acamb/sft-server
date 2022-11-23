@@ -33,8 +33,8 @@ public class Transaction {
     private  String note;
     @ManyToOne
     private User user;
-    @ManyToOne
-    @NotNull
+    @ManyToOne(optional = false)
     private Wallet wallet;
+    private boolean valid = true;
 
 }
