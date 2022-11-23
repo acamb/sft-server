@@ -7,6 +7,7 @@ import ac.project.sft.model.Wallet;
 import ac.project.sft.repository.UserRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class TestUtils {
@@ -28,14 +29,14 @@ public class TestUtils {
 
     public static Transaction createTransaction(BigDecimal amount){
         Transaction transaction = new Transaction();
-        transaction.setDate(new Date());
+        transaction.setDate(LocalDate.now());
         transaction.setAmount(amount);
         return transaction;
     }
 
     public static ScheduledTransaction createScheduledTransaction(BigDecimal amount){
         ScheduledTransaction transaction = new ScheduledTransaction();
-        transaction.setDate(new Date());
+        transaction.setDate(LocalDate.now());
         transaction.setAmount(amount);
         return transaction;
     }

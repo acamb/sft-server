@@ -6,6 +6,8 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.DayOfWeek;
+import java.util.Arrays;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -60,4 +62,12 @@ public interface DtoMapper {
     List<TransactionDto> transactionListToDto(List<Transaction> all);
     @BeanMapping(ignoreByDefault = false)
     List<ScheduledTransactionDto> scheduledTransactionListToDto(List<ScheduledTransaction> scheduledTransactionList);
+
+    default Integer map(DayOfWeek day){
+        return day.getValue();
+    }
+
+    default DayOfWeek map(Integer day){
+        return Arrays.stream(DayOfWeek.values()).filter(d -> d.getValue() == day).findFirst().orElseThrow(IllegalArgumentException::new);
+    }
 }

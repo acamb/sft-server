@@ -9,6 +9,8 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -23,18 +25,20 @@ public class ScheduledTransaction {
     @Version
     private Long version;
     @NotNull
-    private Date date;
+    private LocalDate date;
     private BigDecimal amount;
-    private Boolean recurrent;
+    @NotNull
+    private Boolean recurrent = false;
     @Enumerated(EnumType.STRING)
     private  RecurrentType type;
-    private Date endDate;
-    private  Integer dayOfMonth; //end of month?
-    private Integer dayOfWeek;
+    private LocalDate endDate;
+    private  Integer dayOfMonth;
+    @Enumerated(EnumType.STRING)
+    private DayOfWeek dayOfWeek;
     private boolean valid = true;
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Wallet wallet;
     @ManyToOne
     private Category category;
-    private Date nextFire;
+    private LocalDate nextFire;
 }

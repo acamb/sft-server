@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -64,7 +63,6 @@ public class ManagerService {
     @Transactional
     public void processScheduledTransaction(@Valid ScheduledTransaction scheduledTransaction){
         Transaction transaction = new Transaction();
-        transaction.setDate(new Date());
         transaction.setAmount(scheduledTransaction.getAmount());
         transaction.setCategory(scheduledTransaction.getCategory());
         transaction.setWallet(scheduledTransaction.getWallet());

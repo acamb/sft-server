@@ -2,6 +2,7 @@ package ac.project.sft.service;
 
 import ac.project.sft.exceptions.BadRequestException;
 import ac.project.sft.exceptions.NotFoundException;
+import ac.project.sft.model.RecurrentType;
 import ac.project.sft.model.ScheduledTransaction;
 import ac.project.sft.model.Wallet;
 import ac.project.sft.repository.ScheduledTransactionRepository;
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -20,9 +25,33 @@ public class ScheduledTransactionService {
     @Autowired
     ScheduledTransactionRepository repository;
 
-    private Date getNextFireDate(ScheduledTransaction scheduledTransaction){
-        //TODO
-        return null;
+    private LocalDate getNextFireDate(ScheduledTransaction scheduledTransaction){
+        if(Boolean.FALSE.equals(scheduledTransaction.getRecurrent())){
+            return scheduledTransaction.getDate().isAfter(LocalDate.now()) ? scheduledTransaction.getDate() : null;
+        }
+        if(scheduledTransaction.getType().equals(RecurrentType.WEEKLY)){
+            LocalDate now = LocalDate.now();
+            int todayDoW = now.getDayOfWeek().getValue();
+            int nextDoW = scheduledTransaction.getDayOfWeek().getValue();
+            LocalDate next =  now.plus(Math.abs(todayDoW-nextDoW), ChronoUnit.DAYS);
+            if(scheduledTransaction.getEndDate() != null){
+                return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
+            }
+            else{
+                return next;
+            }
+        }
+        if(scheduledTransaction.getType().equals(RecurrentType.MONTHLY)){
+            LocalDate now = LocalDate.now();
+            LocalDate next =  now.plus(1,ChronoUnit.MONTHS).withDayOfMonth(scheduledTransaction.getDayOfMonth());
+            if(scheduledTransaction.getEndDate() != null){
+                return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
+            }
+            else{
+                return next;
+            }
+        }
+        throw new IllegalArgumentException("RecurrentType not supported");
     }
 
     @Transactional
@@ -30,7 +59,14 @@ public class ScheduledTransactionService {
         if(scheduledTransaction.getId() != null){
             throw new BadRequestException("scheduledTransaction.exists");
         }
-        return repository.save(scheduledTransaction);
+        if(scheduledTransaction.getType() == RecurrentType.MONTHLY && scheduledTransaction.getDayOfMonth() == null){
+            throw new BadRequestException("day.of.month.is.null");
+        }
+        if(scheduledTransaction.getType() == RecurrentType.WEEKLY && scheduledTransaction.getDayOfWeek() == null){
+            throw new BadRequestException("day.of.week.is.null");
+        }
+        ScheduledTransaction t =  repository.save(scheduledTransaction);
+        return schedule(t);
     }
 
     @Transactional
@@ -66,8 +102,8 @@ public class ScheduledTransactionService {
     }
 
     @Transactional
-    public void schedule(@Valid ScheduledTransaction scheduledTransaction){
+    public ScheduledTransaction schedule(@Valid ScheduledTransaction scheduledTransaction){
         scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction));
-        repository.save(scheduledTransaction);
+        return repository.save(scheduledTransaction);
     }
 }
