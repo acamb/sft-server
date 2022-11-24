@@ -14,8 +14,6 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.chrono.IsoChronology;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +33,7 @@ public class ScheduledTransactionService {
             if(dayDiff == 0){
                 dayDiff = 7;
             }
-            LocalDate next =  now.plus(dayDiff*scheduledTransaction.getRecurrentFrequency(), ChronoUnit.DAYS);
+            LocalDate next =  now.plus((long) dayDiff *scheduledTransaction.getRecurrentFrequency(), ChronoUnit.DAYS);
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
             }
@@ -44,8 +42,8 @@ public class ScheduledTransactionService {
             }
         }
         if(scheduledTransaction.getType().equals(RecurrentType.MONTHLY)){
-            LocalDate next =  now.plus(1* scheduledTransaction.getRecurrentFrequency(),ChronoUnit.MONTHS);
-            next = resolvePreviousValid(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());
+            LocalDate next =  now.plus(scheduledTransaction.getRecurrentFrequency(),ChronoUnit.MONTHS);
+            next = normalizeDate(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
             }
@@ -112,24 +110,12 @@ public class ScheduledTransactionService {
         return repository.save(scheduledTransaction);
     }
 
-    /**
-     * Based on LocalDate.resolvePreviousValid (private)
-     * @param year
-     * @param month
-     * @param day
-     * @return
-     */
-    private static LocalDate resolvePreviousValid(int year, int month, int day) {
+
+    private static LocalDate normalizeDate(int year, int month, int day) {
         switch (month) {
-            case 2:
-                day = Math.min(day, IsoChronology.INSTANCE.isLeapYear(year) ? 29 : 28);
-                break;
-            case 4:
-            case 6:
-            case 9:
-            case 11:
-                day = Math.min(day, 30);
-                break;
+            case 2 -> day = Math.min(day, IsoChronology.INSTANCE.isLeapYear(year) ? 29 : 28);
+            case 4, 6, 9, 11 -> day = Math.min(day, 30);
+            default -> day = Math.min(day,31);
         }
         return LocalDate.of(year, month, day);
     }
