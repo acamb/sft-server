@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.chrono.IsoChronology;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
@@ -25,12 +26,11 @@ public class ScheduledTransactionService {
     @Autowired
     ScheduledTransactionRepository repository;
 
-    private LocalDate getNextFireDate(ScheduledTransaction scheduledTransaction){
+    public static LocalDate getNextFireDate(ScheduledTransaction scheduledTransaction,LocalDate now){
         if(Boolean.FALSE.equals(scheduledTransaction.getRecurrent())){
-            return scheduledTransaction.getDate().isAfter(LocalDate.now()) ? scheduledTransaction.getDate() : null;
+            return scheduledTransaction.getDate().isAfter(now) ? scheduledTransaction.getDate() : null;
         }
         if(scheduledTransaction.getType().equals(RecurrentType.WEEKLY)){
-            LocalDate now = LocalDate.now();
             int todayDoW = now.getDayOfWeek().getValue();
             int nextDoW = scheduledTransaction.getDayOfWeek().getValue();
             LocalDate next =  now.plus(Math.abs(todayDoW-nextDoW), ChronoUnit.DAYS);
@@ -42,8 +42,8 @@ public class ScheduledTransactionService {
             }
         }
         if(scheduledTransaction.getType().equals(RecurrentType.MONTHLY)){
-            LocalDate now = LocalDate.now();
-            LocalDate next =  now.plus(1,ChronoUnit.MONTHS).withDayOfMonth(scheduledTransaction.getDayOfMonth());
+            LocalDate next =  now.plus(1,ChronoUnit.MONTHS);
+            next = resolvePreviousValid(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
             }
@@ -80,7 +80,7 @@ public class ScheduledTransactionService {
         db.setEndDate(scheduledTransaction.getEndDate());
         db.setDayOfMonth(scheduledTransaction.getDayOfMonth());
         db.setDayOfWeek(scheduledTransaction.getDayOfWeek());
-        db.setNextFire(getNextFireDate(db));
+        db.setNextFire(getNextFireDate(db,LocalDate.now()));
         return repository.save(db);
     }
 
@@ -103,7 +103,29 @@ public class ScheduledTransactionService {
 
     @Transactional
     public ScheduledTransaction schedule(@Valid ScheduledTransaction scheduledTransaction){
-        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction));
+        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction,LocalDate.now()));
         return repository.save(scheduledTransaction);
+    }
+
+    /**
+     * Based on LocalDate.resolvePreviousValid (private)
+     * @param year
+     * @param month
+     * @param day
+     * @return
+     */
+    private static LocalDate resolvePreviousValid(int year, int month, int day) {
+        switch (month) {
+            case 2:
+                day = Math.min(day, IsoChronology.INSTANCE.isLeapYear(year) ? 29 : 28);
+                break;
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                day = Math.min(day, 30);
+                break;
+        }
+        return LocalDate.of(year, month, day);
     }
 }
