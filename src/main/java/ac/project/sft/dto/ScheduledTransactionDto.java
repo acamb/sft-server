@@ -14,8 +14,9 @@ public class ScheduledTransactionDto {
     private BigDecimal amount;
     private Boolean recurrent;
     private RecurrentType type;
+    private Integer recurrentFrequency;
     private Date endDate;
-    private Integer dayOfMonth; //end of month?
+    private Integer dayOfMonth;
     private Integer dayOfWeek;
     private CategoryDto categoryDto;
 }

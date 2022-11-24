@@ -31,9 +31,11 @@ public class ScheduledTransactionService {
             return scheduledTransaction.getDate().isAfter(now) ? scheduledTransaction.getDate() : null;
         }
         if(scheduledTransaction.getType().equals(RecurrentType.WEEKLY)){
-            int todayDoW = now.getDayOfWeek().getValue();
-            int nextDoW = scheduledTransaction.getDayOfWeek().getValue();
-            LocalDate next =  now.plus(Math.abs(todayDoW-nextDoW), ChronoUnit.DAYS);
+            int dayDiff = Math.abs(now.getDayOfWeek().getValue() - scheduledTransaction.getDayOfWeek().getValue());
+            if(dayDiff == 0){
+                dayDiff = 7;
+            }
+            LocalDate next =  now.plus(dayDiff*scheduledTransaction.getRecurrentFrequency(), ChronoUnit.DAYS);
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
             }
@@ -42,7 +44,7 @@ public class ScheduledTransactionService {
             }
         }
         if(scheduledTransaction.getType().equals(RecurrentType.MONTHLY)){
-            LocalDate next =  now.plus(1,ChronoUnit.MONTHS);
+            LocalDate next =  now.plus(1* scheduledTransaction.getRecurrentFrequency(),ChronoUnit.MONTHS);
             next = resolvePreviousValid(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
@@ -64,6 +66,9 @@ public class ScheduledTransactionService {
         }
         if(scheduledTransaction.getType() == RecurrentType.WEEKLY && scheduledTransaction.getDayOfWeek() == null){
             throw new BadRequestException("day.of.week.is.null");
+        }
+        if(scheduledTransaction.getRecurrent() && scheduledTransaction.getRecurrentFrequency() == null){
+            scheduledTransaction.setRecurrentFrequency(1);
         }
         ScheduledTransaction t =  repository.save(scheduledTransaction);
         return schedule(t);

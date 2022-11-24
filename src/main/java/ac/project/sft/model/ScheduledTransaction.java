@@ -7,6 +7,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -29,6 +30,8 @@ public class ScheduledTransaction {
     private BigDecimal amount;
     @NotNull
     private Boolean recurrent = false;
+    @Min(value = 1)
+    private Integer recurrentFrequency = 1;
     @Enumerated(EnumType.STRING)
     private  RecurrentType type;
     private LocalDate endDate;

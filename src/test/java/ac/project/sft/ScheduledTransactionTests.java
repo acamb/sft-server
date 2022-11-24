@@ -135,7 +135,12 @@ class ScheduledTransactionTests {
         LocalDate expected = LocalDate.of(2020,11,1);
         assertEquals(expected,result);
         //MONTH +12
-        //TODO
+        sc.setDayOfMonth(1);
+        sc.setRecurrentFrequency(12);
+        result = ScheduledTransactionService.getNextFireDate(sc,testDate);
+        expected = LocalDate.of(2021,10,1);
+        assertEquals(expected,result);
+        sc.setRecurrentFrequency(1);
         //end of year + 1 month
         testDate = LocalDate.of(2020,12,1);
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
@@ -146,6 +151,7 @@ class ScheduledTransactionTests {
         testDate = LocalDate.of(2023,1,1);
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
         expected = LocalDate.of(2023,2,28);
+        assertEquals(expected,result);
         //WEEK + 1
         sc.setDayOfMonth(null);
         sc.setType(RecurrentType.WEEKLY);
@@ -153,13 +159,21 @@ class ScheduledTransactionTests {
         testDate = LocalDate.of(2022,11,25);
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
         expected = LocalDate.of(2022,12,2);
+        assertEquals(expected,result);
         //WEEK + 7
-        //TODO
+        sc.setDayOfWeek(DayOfWeek.FRIDAY);
+        sc.setRecurrentFrequency(7);
+        testDate = LocalDate.of(2022,11,25);
+        result = ScheduledTransactionService.getNextFireDate(sc,testDate);
+        expected = LocalDate.of(2023,1,13);
+        assertEquals(expected,result);
+        sc.setRecurrentFrequency(1);
         //end of year + 1 week
         sc.setDayOfWeek(DayOfWeek.WEDNESDAY);
         testDate = LocalDate.of(2022,12,28);
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
         expected = LocalDate.of(2023,1,4);
+        assertEquals(expected,result);
 
     }
 }
