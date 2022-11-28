@@ -20,7 +20,7 @@ public class ScheduledTransactionController {
     @Autowired
     DtoMapper mapper;
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ScheduledTransactionDto create(@RequestBody CreateScheduledPayload payload, Authentication authentication){
         return mapper.scheduledTransactionToDto(
@@ -31,7 +31,7 @@ public class ScheduledTransactionController {
         );
     }
 
-    @PutMapping
+    @PutMapping("/")
     public ScheduledTransactionDto update(@RequestBody CreateScheduledPayload payload,Authentication authentication){
         return mapper.scheduledTransactionToDto(
                 managerService.updateScheduled(
@@ -42,7 +42,7 @@ public class ScheduledTransactionController {
         );
     }
 
-    @DeleteMapping
+    @DeleteMapping("/")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@RequestBody CreateScheduledPayload payload, Authentication authentication){
         managerService.deleteScheduled(

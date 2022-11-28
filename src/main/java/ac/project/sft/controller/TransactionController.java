@@ -21,23 +21,23 @@ public class TransactionController {
     @Autowired
     DtoMapper mapper;
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void create(@RequestBody TransactionRequestPayload payload, Authentication authentication){
         managerService.addTransaction(payload.getWalletDto().getId(),authentication.getName(), payload.getTransactionDto());
     }
 
-    @DeleteMapping
+    @DeleteMapping("/")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@RequestBody TransactionRequestPayload payload, Authentication authentication){
         managerService.removeTransaction(payload.getWalletDto().getId(),authentication.getName(), payload.getTransactionDto());
     }
 
-    @GetMapping
-    public List<TransactionDto> getTransactions(@RequestBody WalletDto wallet,Authentication authentication){
+    @GetMapping("/:id")
+    public List<TransactionDto> getTransactions(@PathVariable Long walletId,Authentication authentication){
         return mapper.transactionListToDto(
                 managerService.getAllTransactions(
-                        mapper.dtoToWallet(wallet),
+                        walletId,
                         authentication.getName()
                 )
         );

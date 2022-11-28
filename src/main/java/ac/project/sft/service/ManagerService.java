@@ -119,9 +119,13 @@ public class ManagerService {
     }
 
     public List<Transaction> getAllTransactions(@Valid Wallet wallet,String username){
-        UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
+        return getAllTransactions(wallet.getId(),username);
+    }
+
+    public List<Transaction> getAllTransactions(Long walletId,String username){
+        UserWallet userWallet = walletService.getWallet(walletId,username);
         if(canWrite(userWallet)){
-            return transactionService.getAll(wallet);
+            return transactionService.getAll(userWallet.getWallet());
         }
         else{
             throw new NotAuthorizedException(NO_GRANTS);

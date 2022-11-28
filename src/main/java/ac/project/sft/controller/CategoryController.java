@@ -19,14 +19,14 @@ public class CategoryController {
     @Autowired
     DtoMapper mapper;
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(value= HttpStatus.CREATED)
     public CategoryDto create(@RequestBody CategoryDto categoryDto){
         Category result = categoryService.create(mapper.dtoToCategory(categoryDto));
         return mapper.categoryToDto(result);
     }
 
-    @PutMapping
+    @PutMapping("/")
     public CategoryDto update(@RequestBody CategoryDto categoryDto){
         Category result = categoryService.update(mapper.dtoToCategory(categoryDto));
         return mapper.categoryToDto(result);
