@@ -34,7 +34,7 @@ public class WalletController {
         return mapper.userWalletsToDtos(walletService.getWallets(authentication.getName()));
     }
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public UserWalletDto createWallet(@RequestBody WalletDto walletDto, Authentication authentication){
         return mapper.userWalletToDto(walletService.createWallet(mapper.dtoToWallet(walletDto),authentication.getName()));
@@ -46,6 +46,13 @@ public class WalletController {
         walletService.deleteWallet(id);
     }
 
+
+    @GetMapping("/association")
+    public List<UserWalletDto> getAssociations(Authentication authentication){
+        return mapper.userWalletsToDtos(
+                walletService.getAssociations(authentication.getName())
+        );
+    }
     @PostMapping("/association")
     @ResponseStatus(HttpStatus.CREATED)
     public UserWalletDto associate(@RequestBody AssociateWalletPayload payload) {

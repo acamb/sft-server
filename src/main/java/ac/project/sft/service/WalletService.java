@@ -83,4 +83,8 @@ public class WalletService {
     public void deleteAssociation(@Valid Wallet wallet, String username) {
         userWalletService.deassociate(wallet,username);
     }
+
+    public List<UserWallet> getAssociations(String username) {
+        return userWalletService.getAssociations(username);
+    }
 }

@@ -17,4 +17,6 @@ public interface UserWalletRepository extends CrudRepository<UserWallet,Long> {
     List<UserWallet> findAllByUser(User user);
 
     List<UserWallet> findAllByWallet(Wallet wallet);
+
+    List<UserWallet> findByUserAndOwnedTrue(User user);
 }
