@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -67,6 +68,7 @@ public class ManagerService {
         transaction.setCategory(scheduledTransaction.getCategory());
         transaction.setWallet(scheduledTransaction.getWallet());
         transaction.setPreviousAmount(scheduledTransaction.getWallet().getBalance());
+        transaction.setDate(LocalDate.now());
         scheduledTransactionService.schedule(scheduledTransaction);
         Wallet wallet = walletService.getWallet(scheduledTransaction.getWallet().getId());
         addTransaction(wallet,transaction,null);

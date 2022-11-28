@@ -12,9 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.chrono.IsoChronology;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,15 +24,16 @@ public class ScheduledTransactionService {
     @Autowired
     ScheduledTransactionRepository repository;
 
-    private LocalDate getNextFireDate(ScheduledTransaction scheduledTransaction){
+    public static LocalDate getNextFireDate(ScheduledTransaction scheduledTransaction,LocalDate now){
         if(Boolean.FALSE.equals(scheduledTransaction.getRecurrent())){
-            return scheduledTransaction.getDate().isAfter(LocalDate.now()) ? scheduledTransaction.getDate() : null;
+            return scheduledTransaction.getDate().isAfter(now) ? scheduledTransaction.getDate() : null;
         }
         if(scheduledTransaction.getType().equals(RecurrentType.WEEKLY)){
-            LocalDate now = LocalDate.now();
-            int todayDoW = now.getDayOfWeek().getValue();
-            int nextDoW = scheduledTransaction.getDayOfWeek().getValue();
-            LocalDate next =  now.plus(Math.abs(todayDoW-nextDoW), ChronoUnit.DAYS);
+            int dayDiff = Math.abs(now.getDayOfWeek().getValue() - scheduledTransaction.getDayOfWeek().getValue());
+            if(dayDiff == 0){
+                dayDiff = 7;
+            }
+            LocalDate next =  now.plus((long) dayDiff *scheduledTransaction.getRecurrentFrequency(), ChronoUnit.DAYS);
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
             }
@@ -42,8 +42,8 @@ public class ScheduledTransactionService {
             }
         }
         if(scheduledTransaction.getType().equals(RecurrentType.MONTHLY)){
-            LocalDate now = LocalDate.now();
-            LocalDate next =  now.plus(1,ChronoUnit.MONTHS).withDayOfMonth(scheduledTransaction.getDayOfMonth());
+            LocalDate next =  now.plus(scheduledTransaction.getRecurrentFrequency(),ChronoUnit.MONTHS);
+            next = normalizeDate(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
             }
@@ -65,6 +65,9 @@ public class ScheduledTransactionService {
         if(scheduledTransaction.getType() == RecurrentType.WEEKLY && scheduledTransaction.getDayOfWeek() == null){
             throw new BadRequestException("day.of.week.is.null");
         }
+        if(scheduledTransaction.getRecurrent() && scheduledTransaction.getRecurrentFrequency() == null){
+            scheduledTransaction.setRecurrentFrequency(1);
+        }
         ScheduledTransaction t =  repository.save(scheduledTransaction);
         return schedule(t);
     }
@@ -80,7 +83,7 @@ public class ScheduledTransactionService {
         db.setEndDate(scheduledTransaction.getEndDate());
         db.setDayOfMonth(scheduledTransaction.getDayOfMonth());
         db.setDayOfWeek(scheduledTransaction.getDayOfWeek());
-        db.setNextFire(getNextFireDate(db));
+        db.setNextFire(getNextFireDate(db,LocalDate.now()));
         return repository.save(db);
     }
 
@@ -103,7 +106,17 @@ public class ScheduledTransactionService {
 
     @Transactional
     public ScheduledTransaction schedule(@Valid ScheduledTransaction scheduledTransaction){
-        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction));
+        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction,LocalDate.now()));
         return repository.save(scheduledTransaction);
+    }
+
+
+    private static LocalDate normalizeDate(int year, int month, int day) {
+        switch (month) {
+            case 2 -> day = Math.min(day, IsoChronology.INSTANCE.isLeapYear(year) ? 29 : 28);
+            case 4, 6, 9, 11 -> day = Math.min(day, 30);
+            default -> day = Math.min(day,31);
+        }
+        return LocalDate.of(year, month, day);
     }
 }
