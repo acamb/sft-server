@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -91,7 +90,7 @@ public class UserWalletService {
 
     public List<UserWallet> getAssociations(String username) {
         User user = userService.findByUsername(username);
-        return repository.findByUserAndOwnedTrue(user).stream().flatMap(
+        return repository.findByUserAndOwnerTrue(user).stream().flatMap(
                 uw -> repository.findAllByWallet(uw.getWallet())
                         .stream()
                         .filter( w -> w.getUser().equals(user))

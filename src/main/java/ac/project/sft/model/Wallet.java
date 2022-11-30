@@ -26,5 +26,7 @@ public class Wallet {
     private BigDecimal balance;
     @NotBlank
     private String description;
+    @NotBlank
+    private String name;
     private boolean valid = true;
 }

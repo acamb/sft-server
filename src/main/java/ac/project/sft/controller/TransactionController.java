@@ -34,7 +34,7 @@ public class TransactionController {
     }
 
     @GetMapping("/:id")
-    public List<TransactionDto> getTransactions(@PathVariable Long walletId,Authentication authentication){
+    public List<TransactionDto> getTransactions(@PathVariable("id") Long walletId,Authentication authentication){
         return mapper.transactionListToDto(
                 managerService.getAllTransactions(
                         walletId,

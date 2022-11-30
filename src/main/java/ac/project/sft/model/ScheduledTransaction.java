@@ -23,6 +23,7 @@ public class ScheduledTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
     @Version
     private Long version;
     @NotNull
