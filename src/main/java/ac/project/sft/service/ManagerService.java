@@ -4,6 +4,7 @@ import ac.project.sft.dto.TransactionDto;
 import ac.project.sft.exceptions.NotAuthorizedException;
 import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.*;
+import ac.project.sft.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,9 @@ public class ManagerService {
     WalletService walletService;
     @Autowired
     DtoMapper mapper;
+
+    @Autowired
+    CategoryService categoryService;
     @Autowired
     ScheduledTransactionService scheduledTransactionService;
 
@@ -44,6 +48,9 @@ public class ManagerService {
         transaction.setPreviousAmount(wallet.getBalance());
         transaction.setUser(user);
         transaction.setWallet(wallet);
+        if(transaction.getCategory() != null) {
+            transaction.setCategory(categoryService.get(transaction.getCategory().getId()));
+        }
         transaction = transactionService.create(transaction);
         walletService.updateBalance(wallet,transaction.getAmount());
     }
@@ -79,6 +86,9 @@ public class ManagerService {
         UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
         if(canWrite(userWallet)){
             scheduledTransaction.setWallet(wallet);
+            if(scheduledTransaction.getCategory() != null) {
+                scheduledTransaction.setCategory(categoryService.get(scheduledTransaction.getCategory().getId()));
+            }
             return scheduledTransactionService.create(scheduledTransaction);
         }
         else{

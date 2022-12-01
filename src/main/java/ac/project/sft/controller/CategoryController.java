@@ -32,7 +32,7 @@ public class CategoryController {
         return mapper.categoryToDto(result);
     }
 
-    @DeleteMapping("/:id")
+    @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){
         categoryService.delete(id);
@@ -43,7 +43,7 @@ public class CategoryController {
         return mapper.categoryListToDto(categoryService.getAll());
     }
 
-    @GetMapping("/:id")
+    @GetMapping("/{id}")
     public CategoryDto get(@PathVariable Long id){
         return mapper.categoryToDto(categoryService.get(id));
     }

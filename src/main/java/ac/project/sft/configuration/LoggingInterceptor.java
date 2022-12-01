@@ -27,7 +27,14 @@ public class LoggingInterceptor implements MethodInterceptor {
         String arguments = extractArguments(args,parameterAnnotations);
         logger.info("[Invocation] Class:{},Method:{},Parameters:{}",
                 invocation.getMethod().getDeclaringClass().getName(),invocation.getMethod().getName(),arguments);
-        Object result = invocation.proceed();
+        Object result;
+        try {
+            result = invocation.proceed();
+        }
+        catch(Exception ex){
+            logger.error("Exception was thrown!",ex);
+            throw ex;
+        }
         Object[] resultArray = {result};
         String resultArguments = extractArguments(resultArray,null);
         logger.info("[Invocation End] Class:{},Method:{},Result:{}",

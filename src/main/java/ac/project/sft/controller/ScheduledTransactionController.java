@@ -52,8 +52,8 @@ public class ScheduledTransactionController {
         );
     }
 
-    @GetMapping("/all")
-    public List<ScheduledTransactionDto> getAll(@RequestBody Long id,Authentication authentication){
+    @GetMapping("/{id}")
+    public List<ScheduledTransactionDto> getAll(@PathVariable("id") Long id,Authentication authentication){
         return mapper.scheduledTransactionListToDto(
                 managerService.getAllScheduled(id,authentication.getName())
         );

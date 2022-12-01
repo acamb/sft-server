@@ -22,7 +22,7 @@ public class WalletController {
     @Autowired
     WalletService walletService;
 
-    @GetMapping("/:id")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserWalletDto getWallet(@PathVariable("id") Long id, Authentication authentication){
         return mapper.userWalletToDto(walletService.getWallet(id,authentication.getName()));
@@ -40,7 +40,7 @@ public class WalletController {
         return mapper.userWalletToDto(walletService.createWallet(mapper.dtoToWallet(walletDto),authentication.getName()));
     }
 
-    @DeleteMapping("/:id")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWallet(@PathVariable("id") Long id){
         walletService.deleteWallet(id);

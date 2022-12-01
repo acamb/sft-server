@@ -33,7 +33,7 @@ public class TransactionController {
         managerService.removeTransaction(payload.getWalletDto().getId(),authentication.getName(), payload.getTransactionDto());
     }
 
-    @GetMapping("/:id")
+    @GetMapping("/{id}")
     public List<TransactionDto> getTransactions(@PathVariable("id") Long walletId,Authentication authentication){
         return mapper.transactionListToDto(
                 managerService.getAllTransactions(
