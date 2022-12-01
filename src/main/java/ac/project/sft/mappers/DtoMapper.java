@@ -68,6 +68,7 @@ public interface DtoMapper {
     }
 
     default DayOfWeek map(Integer day){
-        return Arrays.stream(DayOfWeek.values()).filter(d -> d.getValue() == day).findFirst().orElseThrow(IllegalArgumentException::new);
+
+        return  day == null ? null : Arrays.stream(DayOfWeek.values()).filter(d -> d.getValue() == day).findFirst().orElseThrow(IllegalArgumentException::new);
     }
 }

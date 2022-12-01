@@ -38,6 +38,7 @@ class ScheduledTransactionTests {
         UserWallet result = walletService.createWallet(newWallet,user.getUsername());
         ScheduledTransaction scheduledTransaction = new ScheduledTransaction();
         scheduledTransaction.setWallet(result.getWallet());
+        scheduledTransaction.setName("test");
         scheduledTransaction.setAmount(BigDecimal.valueOf(10));
         scheduledTransaction.setDate(LocalDate.now().plusDays(10));
         scheduledTransaction = service.create(scheduledTransaction);
@@ -48,6 +49,21 @@ class ScheduledTransactionTests {
     }
 
     @Test
+    void removeScheduled(){
+        User user = createTestUser(null,userRepository);
+        Wallet newWallet = createTestWallet(BigDecimal.valueOf(10));
+        UserWallet result = walletService.createWallet(newWallet,user.getUsername());
+        ScheduledTransaction scheduledTransaction = new ScheduledTransaction();
+        scheduledTransaction.setWallet(result.getWallet());
+        scheduledTransaction.setName("test");
+        scheduledTransaction.setAmount(BigDecimal.valueOf(10));
+        scheduledTransaction.setDate(LocalDate.now().plusDays(10));
+        scheduledTransaction = service.create(scheduledTransaction);
+        service.delete(scheduledTransaction);
+        assertEquals(0,service.getAll(result.getWallet()).size());
+    }
+
+    @Test
     void addScheduledWeekly(){
         User user = createTestUser(null,userRepository);
         Wallet newWallet = createTestWallet(BigDecimal.valueOf(10));
@@ -55,6 +71,7 @@ class ScheduledTransactionTests {
         ScheduledTransaction scheduledTransaction = new ScheduledTransaction();
         scheduledTransaction.setWallet(result.getWallet());
         scheduledTransaction.setRecurrent(true);
+        scheduledTransaction.setName("test");
         scheduledTransaction.setAmount(BigDecimal.valueOf(10));
         scheduledTransaction.setDate(LocalDate.now());
         scheduledTransaction.setType(RecurrentType.WEEKLY);
@@ -74,6 +91,7 @@ class ScheduledTransactionTests {
         ScheduledTransaction scheduledTransaction = new ScheduledTransaction();
         scheduledTransaction.setWallet(result.getWallet());
         scheduledTransaction.setRecurrent(true);
+        scheduledTransaction.setName("test");
         scheduledTransaction.setAmount(BigDecimal.valueOf(10));
         scheduledTransaction.setDate(LocalDate.now());
         scheduledTransaction.setType(RecurrentType.MONTHLY);
@@ -92,6 +110,7 @@ class ScheduledTransactionTests {
         UserWallet result = walletService.createWallet(newWallet,user.getUsername());
         ScheduledTransaction scheduledTransaction = new ScheduledTransaction();
         scheduledTransaction.setWallet(result.getWallet());
+        scheduledTransaction.setName("test");
         scheduledTransaction.setAmount(BigDecimal.valueOf(10));
         scheduledTransaction.setDate(LocalDate.now());
         scheduledTransaction.setType(RecurrentType.WEEKLY);
@@ -110,6 +129,7 @@ class ScheduledTransactionTests {
         UserWallet result = walletService.createWallet(newWallet,user.getUsername());
         ScheduledTransaction scheduledTransaction = new ScheduledTransaction();
         scheduledTransaction.setWallet(result.getWallet());
+        scheduledTransaction.setName("test");
         scheduledTransaction.setAmount(BigDecimal.valueOf(10));
         scheduledTransaction.setDate(LocalDate.now());
         scheduledTransaction.setType(RecurrentType.MONTHLY);
@@ -174,6 +194,21 @@ class ScheduledTransactionTests {
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
         expected = LocalDate.of(2023,1,4);
         assertEquals(expected,result);
-
+        //WEEK  -- middle of week
+        sc.setDayOfWeek(DayOfWeek.TUESDAY);
+        sc.setType(RecurrentType.WEEKLY);
+        sc.setRecurrentFrequency(1);
+        testDate = LocalDate.of(2022,12,1);
+        result = ScheduledTransactionService.getNextFireDate(sc,testDate);
+        expected = LocalDate.of(2022,12,6);
+        assertEquals(expected,result);
+        //WEEK  + 2 -- middle of week
+        sc.setDayOfWeek(DayOfWeek.TUESDAY);
+        sc.setType(RecurrentType.WEEKLY);
+        sc.setRecurrentFrequency(2);
+        testDate = LocalDate.of(2022,12,1);
+        result = ScheduledTransactionService.getNextFireDate(sc,testDate);
+        expected = LocalDate.of(2022,12,13);
+        assertEquals(expected,result);
     }
 }

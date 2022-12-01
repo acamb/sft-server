@@ -24,6 +24,7 @@ public class TestUtils {
         Wallet newWallet = new Wallet();
         newWallet.setBalance(balance);
         newWallet.setDescription("test");
+        newWallet.setName("test");
         return newWallet;
     }
 
@@ -31,6 +32,7 @@ public class TestUtils {
         Transaction transaction = new Transaction();
         transaction.setDate(LocalDate.now());
         transaction.setAmount(amount);
+        transaction.setName("test");
         return transaction;
     }
 
@@ -38,6 +40,7 @@ public class TestUtils {
         ScheduledTransaction transaction = new ScheduledTransaction();
         transaction.setDate(LocalDate.now());
         transaction.setAmount(amount);
+        transaction.setName("test");
         return transaction;
     }
 }

@@ -22,7 +22,7 @@ public class LoggingConfiguration {
     @Autowired
     public Advisor serviceLogger(LoggingInterceptor interceptor){
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* ac.project.sftservice.*.*(..))");
+        pointcut.setExpression("execution(* ac.project.sft.service.*.*(..))");
         return new DefaultPointcutAdvisor(pointcut, interceptor);
     }
 

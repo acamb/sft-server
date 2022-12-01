@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.chrono.IsoChronology;
 import java.time.temporal.ChronoUnit;
@@ -29,11 +30,20 @@ public class ScheduledTransactionService {
             return scheduledTransaction.getDate().isAfter(now) ? scheduledTransaction.getDate() : null;
         }
         if(scheduledTransaction.getType().equals(RecurrentType.WEEKLY)){
-            int dayDiff = Math.abs(now.getDayOfWeek().getValue() - scheduledTransaction.getDayOfWeek().getValue());
+            int dayDiff = 0;
+            if(scheduledTransaction.getDayOfWeek().getValue() < now.getDayOfWeek().getValue()){
+                dayDiff = Math.abs(DayOfWeek.SUNDAY.getValue() - now.getDayOfWeek().getValue()) +
+                        scheduledTransaction.getDayOfWeek().getValue();
+            }
+            else{
+                dayDiff = scheduledTransaction.getDayOfWeek().getValue() - now.getDayOfWeek().getValue();
+            }
             if(dayDiff == 0){
                 dayDiff = 7;
             }
-            LocalDate next =  now.plus((long) dayDiff *scheduledTransaction.getRecurrentFrequency(), ChronoUnit.DAYS);
+            //add 7 days for ech getRecurrentFrequency()-1 (the first week is computed in dayDiff)
+            int recurrentDiff = scheduledTransaction.getRecurrentFrequency() > 1 ? 7*(scheduledTransaction.getRecurrentFrequency()-1) : 0;
+            LocalDate next =  now.plus((long) dayDiff + recurrentDiff, ChronoUnit.DAYS);
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
             }

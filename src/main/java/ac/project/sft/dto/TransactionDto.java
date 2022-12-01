@@ -11,6 +11,7 @@ import java.util.Date;
 public class TransactionDto {
     private Long id;
     private Date date;
+    private  String name;
     private BigDecimal amount;
     private BigDecimal previousAmount;
     private CategoryDto categoryDto;

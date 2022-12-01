@@ -72,6 +72,7 @@ public class ManagerService {
     public void processScheduledTransaction(@Valid ScheduledTransaction scheduledTransaction){
         Transaction transaction = new Transaction();
         transaction.setAmount(scheduledTransaction.getAmount());
+        transaction.setName(scheduledTransaction.getName());
         transaction.setCategory(scheduledTransaction.getCategory());
         transaction.setWallet(scheduledTransaction.getWallet());
         transaction.setPreviousAmount(scheduledTransaction.getWallet().getBalance());
@@ -101,6 +102,9 @@ public class ManagerService {
         UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
         if(canWrite(userWallet)){
             scheduledTransaction.setWallet(wallet);
+            if(scheduledTransaction.getCategory() != null) {
+                scheduledTransaction.setCategory(categoryService.get(scheduledTransaction.getCategory().getId()));
+            }
             return scheduledTransactionService.update(scheduledTransaction);
         }
         else{
