@@ -22,6 +22,7 @@ public interface DtoMapper {
 
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="category",target="categoryDto")
+    @Mapping(source="recurrent",target="recurrent",defaultValue = "false")
     ScheduledTransactionDto scheduledTransactionToDto(ScheduledTransaction scheduledTransaction);
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="category",target="categoryDto")
@@ -47,6 +48,7 @@ public interface DtoMapper {
     Category dtoToCategory(CategoryDto category);
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="categoryDto",target="category")
+    @Mapping(source="recurrent",target="recurrent",defaultValue = "false")
     ScheduledTransaction dtoToScheduledTransaction(ScheduledTransactionDto scheduledTransaction);
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="categoryDto",target="category")
@@ -64,7 +66,7 @@ public interface DtoMapper {
     List<ScheduledTransactionDto> scheduledTransactionListToDto(List<ScheduledTransaction> scheduledTransactionList);
 
     default Integer map(DayOfWeek day){
-        return day.getValue();
+        return day == null ? null :day.getValue();
     }
 
     default DayOfWeek map(Integer day){
