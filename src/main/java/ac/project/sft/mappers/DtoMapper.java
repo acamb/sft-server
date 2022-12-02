@@ -6,7 +6,7 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.time.DayOfWeek;
+import java.time.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,5 +70,13 @@ public interface DtoMapper {
     default DayOfWeek map(Integer day){
 
         return  day == null ? null : Arrays.stream(DayOfWeek.values()).filter(d -> d.getValue() == day).findFirst().orElseThrow(IllegalArgumentException::new);
+    }
+
+    default ZonedDateTime map(LocalDate value){
+        return value == null ? null : ZonedDateTime.of(value.atStartOfDay(), ZoneId.of("UTC"));
+    }
+
+    default LocalDate map(ZonedDateTime value){
+        return value == null ? null : value.toLocalDate();
     }
 }

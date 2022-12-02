@@ -94,12 +94,13 @@ public class ScheduledTransactionService {
         db.setDayOfMonth(scheduledTransaction.getDayOfMonth());
         db.setDayOfWeek(scheduledTransaction.getDayOfWeek());
         db.setNextFire(getNextFireDate(db,LocalDate.now()));
-        return repository.save(db);
+        db =  repository.save(db);
+        return schedule(db);
     }
 
     @Transactional
     public void delete(@Valid ScheduledTransaction scheduledTransaction){
-        repository.delete(scheduledTransaction);
+        repository.deleteById(scheduledTransaction.getId());
     }
 
     public List<ScheduledTransaction> getAll(Wallet wallet){
@@ -116,7 +117,7 @@ public class ScheduledTransactionService {
 
     @Transactional
     public ScheduledTransaction schedule(@Valid ScheduledTransaction scheduledTransaction){
-        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction,LocalDate.now()));
+        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction,scheduledTransaction.getDate()));
         return repository.save(scheduledTransaction);
     }
 

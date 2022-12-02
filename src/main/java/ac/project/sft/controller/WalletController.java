@@ -35,7 +35,7 @@ public class WalletController {
     }
 
     @PostMapping("/")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public UserWalletDto createWallet(@RequestBody WalletDto walletDto, Authentication authentication){
         return mapper.userWalletToDto(walletService.createWallet(mapper.dtoToWallet(walletDto),authentication.getName()));
     }
@@ -54,7 +54,7 @@ public class WalletController {
         );
     }
     @PostMapping("/association")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public UserWalletDto associate(@RequestBody AssociateWalletPayload payload) {
         return mapper.userWalletToDto(
                 walletService.associateWallet(mapper.dtoToWallet(payload.getWalletDto()),

@@ -22,9 +22,15 @@ public class TransactionController {
     DtoMapper mapper;
 
     @PostMapping("/")
-    @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void create(@RequestBody TransactionRequestPayload payload, Authentication authentication){
         managerService.addTransaction(payload.getWalletDto().getId(),authentication.getName(), payload.getTransactionDto());
+    }
+
+    @PutMapping("/")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void update(@RequestBody TransactionRequestPayload payload, Authentication authentication){
+        managerService.updateTransaction(payload.getWalletDto().getId(),authentication.getName(), payload.getTransactionDto());
     }
 
     @DeleteMapping("/")

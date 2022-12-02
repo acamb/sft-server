@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Getter
@@ -12,12 +13,12 @@ import java.util.Date;
 public class ScheduledTransactionDto {
     private Long id;
     private String name;
-    private Date date;
+    private ZonedDateTime date;
     private BigDecimal amount;
     private Boolean recurrent;
     private RecurrentType type;
     private Integer recurrentFrequency;
-    private Date endDate;
+    private ZonedDateTime endDate;
     private Integer dayOfMonth;
     private Integer dayOfWeek;
     private CategoryDto categoryDto;

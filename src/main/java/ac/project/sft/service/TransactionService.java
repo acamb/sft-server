@@ -28,6 +28,15 @@ public class TransactionService {
     }
 
     @Transactional
+    public Transaction update(@Valid Transaction transaction){
+        Transaction db = repository.findById(transaction.getId()).orElseThrow(() -> new NotFoundException("transaction.not.exists"));
+        db.setName(transaction.getName());
+        db.setCategory(transaction.getCategory());
+        db.setNote(transaction.getNote());
+        return repository.save(db);
+    }
+
+    @Transactional
     public void delete(@Valid Transaction transaction){
         repository.delete(get(transaction.getId()));
     }

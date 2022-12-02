@@ -21,7 +21,7 @@ public class ScheduledTransactionController {
     DtoMapper mapper;
 
     @PostMapping("/")
-    @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ScheduledTransactionDto create(@RequestBody CreateScheduledPayload payload, Authentication authentication){
         return mapper.scheduledTransactionToDto(
                 managerService.addScheduled(

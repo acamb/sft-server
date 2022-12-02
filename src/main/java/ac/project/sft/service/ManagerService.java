@@ -116,7 +116,6 @@ public class ManagerService {
     public void deleteScheduled(@Valid Wallet wallet,@Valid ScheduledTransaction scheduledTransaction,String username){
         UserWallet userWallet = walletService.getWallet(wallet.getId(),username);
         if(canWrite(userWallet)){
-            scheduledTransaction.setWallet(wallet);
             scheduledTransactionService.delete(scheduledTransaction);
         }
         else{
@@ -154,5 +153,15 @@ public class ManagerService {
 
     public static boolean canRead(UserWallet wallet){
         return wallet.getRead() || wallet.getOwner();
+    }
+
+    public void updateTransaction(Long id, String name, TransactionDto transactionDto) {
+        Transaction transaction = transactionService.get(transactionDto.getId());
+        transaction.setName(transactionDto.getName());
+        if(transactionDto.getCategoryDto() != null){
+            transaction.setCategory(categoryService.get(transactionDto.getCategoryDto().getId()));
+        }
+        transaction.setNote(transactionDto.getNote());
+        transactionService.update(transaction);
     }
 }

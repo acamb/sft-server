@@ -20,7 +20,7 @@ public class CategoryController {
     DtoMapper mapper;
 
     @PostMapping("/")
-    @ResponseStatus(value= HttpStatus.CREATED)
+    @ResponseStatus(value= HttpStatus.NO_CONTENT)
     public CategoryDto create(@RequestBody CategoryDto categoryDto){
         Category result = categoryService.create(mapper.dtoToCategory(categoryDto));
         return mapper.categoryToDto(result);
