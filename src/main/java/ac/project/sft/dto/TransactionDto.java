@@ -20,5 +20,6 @@ public class TransactionDto {
     private String note;
 
     private UserDto userDto;
+    private boolean scheduled;
 
 }

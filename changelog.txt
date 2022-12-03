@@ -1,0 +1,6 @@
+1.0.0 XX/XX/2022
+ - 'scheduled' information on transaction created by scheduled transactions
+
+
+0.0.1 03/12/2022
+Initial release

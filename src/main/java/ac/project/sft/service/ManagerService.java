@@ -77,6 +77,7 @@ public class ManagerService {
         transaction.setWallet(scheduledTransaction.getWallet());
         transaction.setPreviousAmount(scheduledTransaction.getWallet().getBalance());
         transaction.setDate(LocalDate.now());
+        transaction.setScheduled(true);
         scheduledTransactionService.schedule(scheduledTransaction);
         Wallet wallet = walletService.getWallet(scheduledTransaction.getWallet().getId());
         addTransaction(wallet,transaction,null);

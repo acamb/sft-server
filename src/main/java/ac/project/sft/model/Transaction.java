@@ -41,5 +41,6 @@ public class Transaction {
     @ManyToOne(optional = false)
     private Wallet wallet;
     private boolean valid = true;
+    private boolean scheduled = false;
 
 }
