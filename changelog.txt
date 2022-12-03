@@ -1,6 +1,7 @@
 1.0.0 XX/XX/2022
  - 'scheduled' information on transaction created by scheduled transactions
-
+ - positive/negative amounts in a transaction are now checked agains canBePositive/canBeNegative
+   in the category if present
 
 0.0.1 03/12/2022
 Initial release

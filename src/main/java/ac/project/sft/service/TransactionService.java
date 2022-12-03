@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -24,6 +25,7 @@ public class TransactionService {
         if(transaction.getId() != null){
             throw new BadRequestException("transaction.exists");
         }
+        checkValidity(transaction);
         return repository.save(transaction);
     }
 
@@ -33,7 +35,19 @@ public class TransactionService {
         db.setName(transaction.getName());
         db.setCategory(transaction.getCategory());
         db.setNote(transaction.getNote());
+        checkValidity(transaction);
         return repository.save(db);
+    }
+
+    private static void checkValidity(Transaction transaction){
+        if(transaction.getCategory() != null){
+            if(!transaction.getCategory().isCanBeNegative() && transaction.getAmount().compareTo(BigDecimal.ZERO) < 0){
+                throw new BadRequestException("amount.cant.be.negative");
+            }
+            if(!transaction.getCategory().isCanBePositive() && transaction.getAmount().compareTo(BigDecimal.ZERO) > 0){
+                throw new BadRequestException("amount.cant.be.positive");
+            }
+        }
     }
 
     @Transactional

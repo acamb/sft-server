@@ -24,4 +24,6 @@ public class Category {
     private String name;
     private String description;
     private boolean valid = true;
+    private boolean canBePositive = true;
+    private boolean canBeNegative = true;
 }
