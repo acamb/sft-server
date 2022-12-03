@@ -17,7 +17,7 @@ public class ProcessScheduledTransactionJob {
     SchedulerService service;
 
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void execute() throws JobExecutionException {
         service.executeScheduledTransactions();
     }

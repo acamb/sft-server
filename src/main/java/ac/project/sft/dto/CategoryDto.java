@@ -9,7 +9,7 @@ public class CategoryDto {
     private Long id;
     private String name;
     private String description;
-    private boolean canBePositive = true;
-    private boolean canBeNegative = true;
+    private boolean canBePositive;
+    private boolean canBeNegative;
 
 }

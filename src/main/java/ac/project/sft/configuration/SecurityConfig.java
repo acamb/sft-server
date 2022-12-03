@@ -40,10 +40,11 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider())
                 .csrf().disable()
                 .authorizeRequests(requests -> {
+                        var req = requests;
                         if(Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
-                            requests.antMatchers("/h2").permitAll();
+                            req=requests.antMatchers("/h2-console").permitAll();
                         }
-                        requests.antMatchers("/api/login").permitAll()
+                        req.antMatchers("/api/login").permitAll()
                                 .anyRequest().authenticated();
                         }
                 )
