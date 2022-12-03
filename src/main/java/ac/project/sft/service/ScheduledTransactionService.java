@@ -15,7 +15,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.chrono.IsoChronology;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -52,7 +51,10 @@ public class ScheduledTransactionService {
             }
         }
         if(scheduledTransaction.getType().equals(RecurrentType.MONTHLY)){
-            LocalDate next =  now.plus(scheduledTransaction.getRecurrentFrequency(),ChronoUnit.MONTHS);
+            LocalDate next = now;
+            if(now.getDayOfMonth() >= scheduledTransaction.getDayOfMonth()) {
+                next = now.plus(scheduledTransaction.getRecurrentFrequency(), ChronoUnit.MONTHS);
+            }
             next = normalizeDate(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());
             if(scheduledTransaction.getEndDate() != null){
                 return next.isBefore(scheduledTransaction.getEndDate()) ? next : null;
@@ -111,13 +113,13 @@ public class ScheduledTransactionService {
         return repository.findById(id).orElseThrow(()-> new NotFoundException("scheduledTransaction.not.exists"));
     }
 
-    public List<ScheduledTransaction> getScheduledTransactionToBeExecuted(Date startDate){
-        return repository.findAllByNextFireGreaterThanEqual(startDate);
+    public List<ScheduledTransaction> getScheduledTransactionToBeExecuted(LocalDate startDate){
+        return repository.findAllByNextFireLessThanEqual(startDate);
     }
 
     @Transactional
     public ScheduledTransaction schedule(@Valid ScheduledTransaction scheduledTransaction){
-        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction,scheduledTransaction.getDate()));
+        scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction,LocalDate.now()));
         return repository.save(scheduledTransaction);
     }
 

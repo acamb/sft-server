@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class SchedulerService {
     Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     public void executeScheduledTransactions(){
-        List<ScheduledTransaction> transactionList = scheduledTransactionService.getScheduledTransactionToBeExecuted(new Date());
+        List<ScheduledTransaction> transactionList = scheduledTransactionService.getScheduledTransactionToBeExecuted(LocalDate.now());
         for(ScheduledTransaction scheduled : transactionList){
             try{
                 managerService.processScheduledTransaction(scheduled);

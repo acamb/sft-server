@@ -1,8 +1,10 @@
 package ac.project.sft.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.Profiles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -28,19 +32,27 @@ public class SecurityConfig {
     @Autowired
     JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private Environment environment;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authenticationProvider(authenticationProvider())
                 .csrf().disable()
-                .authorizeRequests(
-                        requests -> requests.antMatchers("/api/login").permitAll()
-                                .anyRequest().authenticated()
+                .authorizeRequests(requests -> {
+                        if(Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
+                            requests.antMatchers("/h2").permitAll();
+                        }
+                        requests.antMatchers("/api/login").permitAll()
+                                .anyRequest().authenticated();
+                        }
                 )
                 .exceptionHandling(
                         customizer -> customizer.authenticationEntryPoint(authenticationEntryPoint)
                 )
                 .sessionManagement(
                         customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
                 );
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

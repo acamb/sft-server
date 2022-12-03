@@ -168,7 +168,7 @@ class ScheduledTransactionTests {
         assertEquals(expected,result);
         //month +1 (31 days) on feb
         sc.setDayOfMonth(31);
-        testDate = LocalDate.of(2023,1,1);
+        testDate = LocalDate.of(2023,2,1);
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
         expected = LocalDate.of(2023,2,28);
         assertEquals(expected,result);
@@ -209,6 +209,15 @@ class ScheduledTransactionTests {
         testDate = LocalDate.of(2022,12,1);
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
         expected = LocalDate.of(2022,12,13);
+        assertEquals(expected,result);
+
+        //month +1 (31 days) on feb
+        sc.setType(RecurrentType.MONTHLY);
+        sc.setDayOfMonth(31);
+        sc.setRecurrentFrequency(1);
+        testDate = LocalDate.of(2022,12,3);
+        result = ScheduledTransactionService.getNextFireDate(sc,testDate);
+        expected = LocalDate.of(2022,12,31);
         assertEquals(expected,result);
     }
 }

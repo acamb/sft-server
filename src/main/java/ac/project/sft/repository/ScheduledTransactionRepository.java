@@ -5,7 +5,7 @@ import ac.project.sft.model.Wallet;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -13,5 +13,5 @@ public interface ScheduledTransactionRepository extends PagingAndSortingReposito
 
     List<ScheduledTransaction> findAllByWallet(Wallet wallet);
 
-    List<ScheduledTransaction> findAllByNextFireGreaterThanEqual(Date date);
+    List<ScheduledTransaction> findAllByNextFireLessThanEqual(LocalDate date);
 }
