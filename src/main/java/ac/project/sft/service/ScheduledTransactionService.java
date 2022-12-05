@@ -7,6 +7,8 @@ import ac.project.sft.model.ScheduledTransaction;
 import ac.project.sft.model.Wallet;
 import ac.project.sft.repository.ScheduledTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,8 +107,8 @@ public class ScheduledTransactionService {
         repository.deleteById(scheduledTransaction.getId());
     }
 
-    public List<ScheduledTransaction> getAll(Wallet wallet){
-        return repository.findAllByWallet(wallet);
+    public Page<ScheduledTransaction> getAll(Wallet wallet, Pageable pageable){
+        return repository.findAllByWallet(wallet,pageable);
     }
 
     public ScheduledTransaction get(Long id){

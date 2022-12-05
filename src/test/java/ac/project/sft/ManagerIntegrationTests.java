@@ -6,11 +6,11 @@ import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.*;
 import ac.project.sft.repository.UserRepository;
 import ac.project.sft.service.ManagerService;
-import ac.project.sft.service.TransactionService;
 import ac.project.sft.service.WalletService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -41,8 +41,8 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(BigDecimal.valueOf(30), wallet.getBalance());
-        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername()).size());
-        t = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
         assertEquals(t.getPreviousAmount(), BigDecimal.valueOf(10));
         assertEquals(t.getUser().getUsername(), user.getUsername());
     }
@@ -90,8 +90,8 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(BigDecimal.valueOf(30), wallet.getBalance());
-        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername()).size());
-        t = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
         assertEquals(t.getPreviousAmount(), BigDecimal.valueOf(10));
         assertEquals(t.getUser().getUsername(), user.getUsername());
     }
@@ -108,8 +108,8 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(BigDecimal.valueOf(30), wallet.getBalance());
-        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername()).size());
-        t = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
         assertEquals(t.getPreviousAmount(), BigDecimal.valueOf(10));
         assertEquals(t.getUser().getUsername(), user.getUsername());
     }
@@ -121,12 +121,12 @@ class ManagerIntegrationTests {
         UserWallet userWallet = walletService.createWallet(wallet,user.getUsername());
         Transaction t = createTransaction(BigDecimal.valueOf(20));
         managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
-        t = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
         managerService.removeTransaction(userWallet.getWallet().getId(),user.getUsername(),mapper.transactionToDto(t));
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(BigDecimal.valueOf(10), wallet.getBalance());
-        assertEquals(0, managerService.getAllTransactions(wallet, user.getUsername()).size());
+        assertEquals(0, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -137,7 +137,7 @@ class ManagerIntegrationTests {
         UserWallet userWallet = walletService.createWallet(wallet,user.getUsername());
         Transaction t = createTransaction(BigDecimal.valueOf(20));
         managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
-        Transaction transaction = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        Transaction transaction = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
 
         NotFoundException ex = assertThrows(
                 NotFoundException.class,
@@ -156,7 +156,7 @@ class ManagerIntegrationTests {
         walletService.associateWallet(userWallet.getWallet(),user2.getUsername(),true,false,false);
         Transaction t = createTransaction(BigDecimal.valueOf(20));
         managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
-        Transaction transaction = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        Transaction transaction = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
 
         NotAuthorizedException ex = assertThrows(
                 NotAuthorizedException.class,
@@ -175,12 +175,12 @@ class ManagerIntegrationTests {
         walletService.associateWallet(userWallet.getWallet(),user2.getUsername(),true,true,false);
         Transaction t = createTransaction(BigDecimal.valueOf(20));
         managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
-        t = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
         managerService.removeTransaction(userWallet.getWallet().getId(),user.getUsername(),mapper.transactionToDto(t));
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(BigDecimal.valueOf(10), wallet.getBalance());
-        assertEquals(0, managerService.getAllTransactions(wallet, user.getUsername()).size());
+        assertEquals(0, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -192,12 +192,12 @@ class ManagerIntegrationTests {
         walletService.associateWallet(userWallet.getWallet(),user2.getUsername(),true,false,true);
         Transaction t = createTransaction(BigDecimal.valueOf(20));
         managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
-        t = managerService.getAllTransactions(wallet,user.getUsername()).get(0);
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
         managerService.removeTransaction(userWallet.getWallet().getId(),user.getUsername(),mapper.transactionToDto(t));
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(BigDecimal.valueOf(10), wallet.getBalance());
-        assertEquals(0, managerService.getAllTransactions(wallet, user.getUsername()).size());
+        assertEquals(0, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
 
@@ -212,7 +212,7 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername()).size());
+        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -227,7 +227,7 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user2.getUsername()).size());
+        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user2.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -242,7 +242,7 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user2.getUsername()).size());
+        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user2.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -292,7 +292,7 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(0, managerService.getAllScheduled(wallet.getId(), user.getUsername()).size());
+        assertEquals(0, managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -308,7 +308,7 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(0, managerService.getAllScheduled(wallet.getId(), user2.getUsername()).size());
+        assertEquals(0, managerService.getAllScheduled(wallet.getId(), user2.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -324,7 +324,7 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(0, managerService.getAllScheduled(wallet.getId(), user2.getUsername()).size());
+        assertEquals(0, managerService.getAllScheduled(wallet.getId(), user2.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -378,8 +378,8 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername()).size());
-        assertEquals(managerService.getAllScheduled(wallet.getId(), user.getUsername()).get(0).getAmount(), BigDecimal.valueOf(-15));
+        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        assertEquals(managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).toList().get(0).getAmount(), BigDecimal.valueOf(-15));
     }
 
     @Test
@@ -396,8 +396,8 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername()).size());
-        assertEquals(managerService.getAllScheduled(wallet.getId(), user.getUsername()).get(0).getAmount(), BigDecimal.valueOf(-15));
+        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        assertEquals(managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).toList().get(0).getAmount(), BigDecimal.valueOf(-15));
     }
 
     @Test
@@ -414,8 +414,8 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(10));
-        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername()).size());
-        assertEquals(managerService.getAllScheduled(wallet.getId(), user.getUsername()).get(0).getAmount(), BigDecimal.valueOf(-15));
+        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        assertEquals(managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).toList().get(0).getAmount(), BigDecimal.valueOf(-15));
     }
 
     @Test
@@ -468,7 +468,7 @@ class ManagerIntegrationTests {
 
         wallet = walletService.getWallet(userWallet.getWallet().getId());
         assertEquals(wallet.getBalance(), BigDecimal.valueOf(5));
-        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername()).size());
+        assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
 

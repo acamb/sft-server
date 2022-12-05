@@ -6,6 +6,9 @@ import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.*;
 import ac.project.sft.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -124,24 +127,24 @@ public class ManagerService {
         }
     }
 
-    public List<ScheduledTransaction> getAllScheduled(Long walletId,String username){
+    public Page<ScheduledTransaction> getAllScheduled(Long walletId,String username,Pageable pageable){
         UserWallet userWallet = walletService.getWallet(walletId,username);
         if(canWrite(userWallet)){
-            return scheduledTransactionService.getAll(userWallet.getWallet());
+            return scheduledTransactionService.getAll(userWallet.getWallet(),pageable);
         }
         else{
             throw new NotAuthorizedException(NO_GRANTS);
         }
     }
 
-    public List<Transaction> getAllTransactions(@Valid Wallet wallet,String username){
-        return getAllTransactions(wallet.getId(),username);
+    public Page<Transaction> getAllTransactions(@Valid Wallet wallet,String username, Pageable pageable){
+        return getAllTransactions(wallet.getId(),username,pageable);
     }
 
-    public List<Transaction> getAllTransactions(Long walletId,String username){
+    public Page<Transaction> getAllTransactions(Long walletId, String username, Pageable pageable){
         UserWallet userWallet = walletService.getWallet(walletId,username);
         if(canWrite(userWallet)){
-            return transactionService.getAll(userWallet.getWallet());
+            return transactionService.getAll(userWallet.getWallet(),pageable);
         }
         else{
             throw new NotAuthorizedException(NO_GRANTS);

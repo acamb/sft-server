@@ -1,11 +1,15 @@
 package ac.project.sft.controller;
 
 import ac.project.sft.controller.payloads.request.TransactionRequestPayload;
+import ac.project.sft.controller.payloads.response.PaginatedResponse;
 import ac.project.sft.dto.TransactionDto;
 import ac.project.sft.dto.WalletDto;
 import ac.project.sft.mappers.DtoMapper;
+import ac.project.sft.model.Transaction;
 import ac.project.sft.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +44,18 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    public List<TransactionDto> getTransactions(@PathVariable("id") Long walletId,Authentication authentication){
-        return mapper.transactionListToDto(
+    public PaginatedResponse<Transaction,TransactionDto> getTransactions(@PathVariable("id") Long walletId,
+                                                                         @RequestParam("page") int page,
+                                                                         @RequestParam("size") int size,
+                                                                         Authentication authentication){
+        return new PaginatedResponse<>(
                 managerService.getAllTransactions(
-                        walletId,
-                        authentication.getName()
-                )
-        );
+                walletId,
+                authentication.getName(),
+                        PageRequest.of(page,size)
+                        ),
+                l -> mapper.transactionListToDto(l));
+
     }
 
 

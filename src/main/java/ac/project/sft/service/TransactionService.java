@@ -6,6 +6,8 @@ import ac.project.sft.model.Transaction;
 import ac.project.sft.model.Wallet;
 import ac.project.sft.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,8 +57,8 @@ public class TransactionService {
         repository.delete(get(transaction.getId()));
     }
 
-    public List<Transaction> getAll(@Valid Wallet wallet){
-        return repository.findAllByWallet(wallet);
+    public Page<Transaction> getAll(@Valid Wallet wallet, Pageable pageable){
+        return repository.findAllByWallet(wallet,pageable);
     }
 
     public Transaction get(Long id){

@@ -8,6 +8,7 @@ import ac.project.sft.service.WalletService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -43,7 +44,7 @@ class ScheduledTransactionTests {
         scheduledTransaction.setDate(LocalDate.now().plusDays(10));
         scheduledTransaction = service.create(scheduledTransaction);
 
-        assertEquals(1,service.getAll(result.getWallet()).size());
+        assertEquals(1,service.getAll(result.getWallet(), PageRequest.of(0,25)).getTotalElements());
         LocalDate expected = LocalDate.now().plusDays(10);
         assertEquals(expected,scheduledTransaction.getNextFire());
     }
@@ -60,7 +61,7 @@ class ScheduledTransactionTests {
         scheduledTransaction.setDate(LocalDate.now().plusDays(10));
         scheduledTransaction = service.create(scheduledTransaction);
         service.delete(scheduledTransaction);
-        assertEquals(0,service.getAll(result.getWallet()).size());
+        assertEquals(0,service.getAll(result.getWallet(), PageRequest.of(0,25)).getTotalElements());
     }
 
     @Test
@@ -78,7 +79,7 @@ class ScheduledTransactionTests {
         scheduledTransaction.setDayOfWeek(LocalDate.now().getDayOfWeek().plus(1));
         scheduledTransaction = service.create(scheduledTransaction);
 
-        assertEquals(1,service.getAll(result.getWallet()).size());
+        assertEquals(1,service.getAll(result.getWallet(), PageRequest.of(0,25)).getTotalElements());
         LocalDate expected = LocalDate.now().plusDays(1);
         assertEquals(expected,scheduledTransaction.getNextFire());
     }
@@ -98,7 +99,7 @@ class ScheduledTransactionTests {
         scheduledTransaction.setDayOfMonth(1);
         scheduledTransaction = service.create(scheduledTransaction);
 
-        assertEquals(1,service.getAll(result.getWallet()).size());
+        assertEquals(1,service.getAll(result.getWallet(), PageRequest.of(0,25)).getTotalElements());
         LocalDate expected = LocalDate.now().plusMonths(1).withDayOfMonth(1);
         assertEquals(expected,scheduledTransaction.getNextFire());
     }

@@ -1,10 +1,13 @@
 package ac.project.sft.controller;
 
 import ac.project.sft.controller.payloads.request.CreateScheduledPayload;
+import ac.project.sft.controller.payloads.response.PaginatedResponse;
 import ac.project.sft.dto.ScheduledTransactionDto;
 import ac.project.sft.mappers.DtoMapper;
+import ac.project.sft.model.ScheduledTransaction;
 import ac.project.sft.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -53,9 +56,15 @@ public class ScheduledTransactionController {
     }
 
     @GetMapping("/{id}")
-    public List<ScheduledTransactionDto> getAll(@PathVariable("id") Long id,Authentication authentication){
-        return mapper.scheduledTransactionListToDto(
-                managerService.getAllScheduled(id,authentication.getName())
+    public PaginatedResponse<ScheduledTransaction,ScheduledTransactionDto> getAll(@PathVariable("id") Long id,
+                                                                                  @RequestParam("page") int page,
+                                                                                  @RequestParam("size") int size,
+                                                                                  Authentication authentication){
+        return new PaginatedResponse<ScheduledTransaction,ScheduledTransactionDto >(
+                managerService.getAllScheduled(id,
+                        authentication.getName(),
+                        PageRequest.of(page,size)),
+                t -> mapper.scheduledTransactionListToDto(t)
         );
     }
 
