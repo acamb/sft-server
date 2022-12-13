@@ -1,5 +1,6 @@
 package ac.project.sft.service;
 
+import ac.project.sft.dto.SearchScheduledTransactionDto;
 import ac.project.sft.exceptions.BadRequestException;
 import ac.project.sft.exceptions.NotFoundException;
 import ac.project.sft.model.RecurrentType;
@@ -9,6 +10,7 @@ import ac.project.sft.repository.ScheduledTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,8 @@ import java.time.LocalDate;
 import java.time.chrono.IsoChronology;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+
+import static ac.project.sft.repository.specifications.ScheduledTransactionSpecifications.*;
 
 @Service
 @Validated
@@ -108,7 +112,23 @@ public class ScheduledTransactionService {
     }
 
     public Page<ScheduledTransaction> getAll(Wallet wallet, Pageable pageable){
-        return repository.findAllByWallet(wallet,pageable);
+        return getAll(wallet,pageable,null);
+    }
+
+    public Page<ScheduledTransaction> getAll(Wallet wallet, Pageable pageable, SearchScheduledTransactionDto search){
+        Specification<ScheduledTransaction> spec = Specification.where(wallet(wallet));
+        if(search != null){
+            spec=spec.and(
+                    search.getStartDate() != null ? startDate(search.getStartDate()) : null
+            ).and(
+                    search.getEndDate() != null ? endDate(search.getEndDate()) : null
+            ).and(
+                    search.getCategoryDto() != null ? category(search.getCategoryDto()) : null
+            ).and(
+                    search.getName() != null ? name(search.getName()) : null
+            );
+        }
+        return repository.findAll(spec,pageable);
     }
 
     public ScheduledTransaction get(Long id){

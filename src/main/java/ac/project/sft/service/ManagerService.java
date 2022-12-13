@@ -1,5 +1,7 @@
 package ac.project.sft.service;
 
+import ac.project.sft.dto.SearchScheduledTransactionDto;
+import ac.project.sft.dto.SearchTransactionDto;
 import ac.project.sft.dto.TransactionDto;
 import ac.project.sft.exceptions.NotAuthorizedException;
 import ac.project.sft.mappers.DtoMapper;
@@ -126,11 +128,14 @@ public class ManagerService {
             throw new NotAuthorizedException(NO_GRANTS);
         }
     }
+    public Page<ScheduledTransaction> getAllScheduled(Long walletId, String username, Pageable pageable) {
+        return getAllScheduled(walletId,username,pageable,null);
+    }
 
-    public Page<ScheduledTransaction> getAllScheduled(Long walletId,String username,Pageable pageable){
+    public Page<ScheduledTransaction> getAllScheduled(Long walletId, String username, Pageable pageable, SearchScheduledTransactionDto search){
         UserWallet userWallet = walletService.getWallet(walletId,username);
         if(canWrite(userWallet)){
-            return scheduledTransactionService.getAll(userWallet.getWallet(),pageable);
+            return scheduledTransactionService.getAll(userWallet.getWallet(),pageable,search);
         }
         else{
             throw new NotAuthorizedException(NO_GRANTS);
@@ -138,13 +143,21 @@ public class ManagerService {
     }
 
     public Page<Transaction> getAllTransactions(@Valid Wallet wallet,String username, Pageable pageable){
-        return getAllTransactions(wallet.getId(),username,pageable);
+        return getAllTransactions(wallet,username,pageable,null);
     }
 
-    public Page<Transaction> getAllTransactions(Long walletId, String username, Pageable pageable){
+    public Page<Transaction> getAllTransactions(@Valid Wallet wallet,String username, Pageable pageable, SearchTransactionDto search){
+        return getAllTransactions(wallet.getId(),username,pageable,search);
+    }
+
+    public Page<Transaction> getAllTransactions(Long walletId, String username, Pageable pageable) {
+        return getAllTransactions(walletId,username,pageable,null);
+    }
+
+    public Page<Transaction> getAllTransactions(Long walletId, String username, Pageable pageable, SearchTransactionDto search){
         UserWallet userWallet = walletService.getWallet(walletId,username);
-        if(canWrite(userWallet)){
-            return transactionService.getAll(userWallet.getWallet(),pageable);
+        if(canRead(userWallet)){
+            return transactionService.getAll(userWallet.getWallet(),pageable,search);
         }
         else{
             throw new NotAuthorizedException(NO_GRANTS);

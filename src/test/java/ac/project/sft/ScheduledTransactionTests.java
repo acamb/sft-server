@@ -1,8 +1,11 @@
 package ac.project.sft;
 
+import ac.project.sft.dto.SearchScheduledTransactionDto;
+import ac.project.sft.dto.SearchTransactionDto;
 import ac.project.sft.exceptions.BadRequestException;
 import ac.project.sft.model.*;
 import ac.project.sft.repository.UserRepository;
+import ac.project.sft.service.CategoryService;
 import ac.project.sft.service.ScheduledTransactionService;
 import ac.project.sft.service.WalletService;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import static ac.project.sft.TestUtils.createTestUser;
 import static ac.project.sft.TestUtils.createTestWallet;
@@ -31,6 +35,8 @@ class ScheduledTransactionTests {
     WalletService walletService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CategoryService categoryService;
 
     @Test
     void addScheduled(){
@@ -220,5 +226,71 @@ class ScheduledTransactionTests {
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
         expected = LocalDate.of(2022,12,31);
         assertEquals(expected,result);
+    }
+
+    @Test
+    public void testSearchDates(){
+        User user = createTestUser(null,userRepository);
+        Wallet newWallet = createTestWallet(BigDecimal.valueOf(10));
+        UserWallet result = walletService.createWallet(newWallet,user.getUsername());
+        for(int i=0;i<10;i++){
+            ScheduledTransaction t = createTransaction(user,result.getWallet(),""+i,LocalDate.now().plus(i, ChronoUnit.DAYS));
+            service.create(t);
+        }
+        SearchScheduledTransactionDto search = new SearchScheduledTransactionDto();
+        search.setStartDate(LocalDate.now().plus(1,ChronoUnit.DAYS));
+        assertEquals(9,service.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
+        search.setEndDate(LocalDate.now().plus(8,ChronoUnit.DAYS));
+        assertEquals(8,service.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
+        search.setStartDate(null);
+        assertEquals(9,service.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
+    }
+
+    @Test
+    public void testSearchNames(){
+        User user = createTestUser(null,userRepository);
+        Wallet newWallet = createTestWallet(BigDecimal.valueOf(10));
+        UserWallet result = walletService.createWallet(newWallet,user.getUsername());
+        for(int i=0;i<10;i++){
+            ScheduledTransaction t = createTransaction(user,result.getWallet(),""+i,LocalDate.now().plus(i, ChronoUnit.DAYS));
+            service.create(t);
+        }
+        SearchScheduledTransactionDto search = new SearchScheduledTransactionDto();
+        search.setName("%trx%");
+        assertEquals(10,service.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
+        search.setName("%9");
+        assertEquals(1,service.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
+    }
+
+    @Test
+    public void testSearchCategory(){
+        User user = createTestUser(null,userRepository);
+        Wallet newWallet = createTestWallet(BigDecimal.valueOf(10));
+        UserWallet result = walletService.createWallet(newWallet,user.getUsername());
+        Category c = new Category();
+        c.setName("test");
+        c = categoryService.create(c);
+        for(int i=0;i<10;i++){
+            ScheduledTransaction t = createTransaction(user,result.getWallet(),""+i,LocalDate.now().plus(i, ChronoUnit.DAYS));
+            if(i%2==0){
+                t.setCategory(c);
+            }
+            service.create(t);
+        }
+        SearchScheduledTransactionDto search = null;
+        assertEquals(10,service.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
+        search = new SearchScheduledTransactionDto();
+        search.setCategoryDto(c);
+        assertEquals(5,service.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
+    }
+
+    public ScheduledTransaction createTransaction(User user, Wallet wallet,String prefix,LocalDate date){
+        ScheduledTransaction result = new ScheduledTransaction();
+        result.setDate(date);
+        result.setName("trx"+prefix);
+        result.setName("trx"+prefix);
+        result.setAmount(BigDecimal.ONE);
+        result.setWallet(wallet);
+        return result;
     }
 }
