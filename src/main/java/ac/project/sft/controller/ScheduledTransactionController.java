@@ -11,6 +11,7 @@ import ac.project.sft.model.ScheduledTransaction;
 import ac.project.sft.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -82,7 +83,7 @@ public class ScheduledTransactionController {
         return new PaginatedResponse<ScheduledTransaction,ScheduledTransactionDto >(
                 managerService.getAllScheduled(id,
                         authentication.getName(),
-                        PageRequest.of(page,size),
+                        PageRequest.of(page,size, Sort.by("date").descending()),
                         search),
                 t -> mapper.scheduledTransactionListToDto(t)
         );

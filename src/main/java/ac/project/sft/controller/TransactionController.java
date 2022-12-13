@@ -7,9 +7,11 @@ import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.Category;
 import ac.project.sft.model.Transaction;
 import ac.project.sft.service.ManagerService;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -68,7 +70,7 @@ public class TransactionController {
                 managerService.getAllTransactions(
                 walletId,
                 authentication.getName(),
-                PageRequest.of(page,size),
+                PageRequest.of(page,size, Sort.by("date").descending()),
                 search
                 ),
                 l -> mapper.transactionListToDto(l));
