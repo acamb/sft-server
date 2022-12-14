@@ -70,7 +70,7 @@ public class TransactionController {
                 managerService.getAllTransactions(
                 walletId,
                 authentication.getName(),
-                PageRequest.of(page,size, Sort.by("date").descending()),
+                PageRequest.of(page,size, Sort.by("date").descending().and(Sort.by("name"))),
                 search
                 ),
                 l -> mapper.transactionListToDto(l));

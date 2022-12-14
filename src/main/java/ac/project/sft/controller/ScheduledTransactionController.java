@@ -80,10 +80,10 @@ public class ScheduledTransactionController {
             search.setCategoryDto(new Category());
             search.getCategoryDto().setId(category);
         }
-        return new PaginatedResponse<ScheduledTransaction,ScheduledTransactionDto >(
+        return new PaginatedResponse<>(
                 managerService.getAllScheduled(id,
                         authentication.getName(),
-                        PageRequest.of(page,size, Sort.by("date").descending()),
+                        PageRequest.of(page,size, Sort.by("date").descending().and(Sort.by("name"))),
                         search),
                 t -> mapper.scheduledTransactionListToDto(t)
         );
