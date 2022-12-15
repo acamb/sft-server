@@ -33,6 +33,8 @@ public class CategoryService {
         Category categoryDb = repository.findById(category.getId()).orElseThrow(()-> new NotFoundException(NOT_FOUND_KEY));
         categoryDb.setDescription(category.getDescription());
         categoryDb.setName(category.getName());
+        categoryDb.setCanBePositive(category.isCanBePositive());
+        categoryDb.setCanBeNegative(category.isCanBeNegative());
         return repository.save(categoryDb);
     }
 
