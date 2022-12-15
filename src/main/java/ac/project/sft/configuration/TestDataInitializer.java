@@ -2,10 +2,9 @@ package ac.project.sft.configuration;
 
 import ac.project.sft.dto.ScheduledTransactionDto;
 import ac.project.sft.dto.TransactionDto;
-import ac.project.sft.model.ScheduledTransaction;
-import ac.project.sft.model.User;
-import ac.project.sft.model.UserWallet;
-import ac.project.sft.model.Wallet;
+import ac.project.sft.mappers.DtoMapper;
+import ac.project.sft.model.*;
+import ac.project.sft.service.CategoryService;
 import ac.project.sft.service.ManagerService;
 import ac.project.sft.service.UserService;
 import ac.project.sft.service.WalletService;
@@ -38,6 +37,12 @@ public class TestDataInitializer implements CommandLineRunner {
     @Autowired
     UserService userService;
 
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
+    DtoMapper mapper;
+
     @Override
     public void run(String... args) throws Exception {
         if(Arrays.asList(environment.getActiveProfiles()).contains("dev")){
@@ -47,11 +52,27 @@ public class TestDataInitializer implements CommandLineRunner {
             wallet.setBalance(BigDecimal.valueOf(100));
             wallet.setDescription("test wallet");
             UserWallet userWallet = walletService.createWallet(wallet,user.getUsername());
+            Category category1 = new Category();
+            category1.setName("test");
+            category1.setCanBeNegative(true);
+            category1.setCanBePositive(true);
+            category1=categoryService.create(category1);
+            Category category2 = new Category();
+            category2.setName("test");
+            category2.setCanBeNegative(true);
+            category2.setCanBePositive(true);
+            category2=categoryService.create(category2);
             for(int i=0;i<100;i++){
                 TransactionDto transactionDto = new TransactionDto();
                 transactionDto.setAmount(BigDecimal.valueOf(i));
                 transactionDto.setName("test"+i);
                 transactionDto.setDate(ZonedDateTime.now());
+                if(i%2 == 0){
+                    transactionDto.setCategoryDto(mapper.categoryToDto(category1));
+                }
+                else{
+                    transactionDto.setCategoryDto(mapper.categoryToDto(category2));
+                }
                 managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(),transactionDto);
                 ScheduledTransaction scheduledTransactionDto = new ScheduledTransaction();
                 scheduledTransactionDto.setAmount(BigDecimal.valueOf(i));

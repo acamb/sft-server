@@ -6,10 +6,8 @@ import ac.project.sft.dto.TransactionDto;
 import ac.project.sft.exceptions.NotAuthorizedException;
 import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.*;
-import ac.project.sft.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,6 +133,9 @@ public class ManagerService {
     public Page<ScheduledTransaction> getAllScheduled(Long walletId, String username, Pageable pageable, SearchScheduledTransactionDto search){
         UserWallet userWallet = walletService.getWallet(walletId,username);
         if(canWrite(userWallet)){
+            if(search != null && search.getCategoryDto() != null ){
+                search.setCategoryDto(categoryService.get(search.getCategoryDto().getId()));
+            }
             return scheduledTransactionService.getAll(userWallet.getWallet(),pageable,search);
         }
         else{
@@ -157,6 +158,9 @@ public class ManagerService {
     public Page<Transaction> getAllTransactions(Long walletId, String username, Pageable pageable, SearchTransactionDto search){
         UserWallet userWallet = walletService.getWallet(walletId,username);
         if(canRead(userWallet)){
+            if(search != null && search.getCategoryDto() != null ) {
+                search.setCategoryDto(categoryService.get(search.getCategoryDto().getId()));
+            }
             return transactionService.getAll(userWallet.getWallet(),pageable,search);
         }
         else{
@@ -172,7 +176,7 @@ public class ManagerService {
         return wallet.getRead() || wallet.getOwner();
     }
 
-    public void updateTransaction(Long id, String name, TransactionDto transactionDto) {
+    public void updateTransaction(String name, TransactionDto transactionDto) {
         Transaction transaction = transactionService.get(transactionDto.getId());
         transaction.setName(transactionDto.getName());
         if(transactionDto.getCategoryDto() != null){
