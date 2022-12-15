@@ -16,14 +16,15 @@ import java.util.List;
 @Validated
 public class CategoryService {
 
-    public static final String NOT_FOUND_KEY = "category.not.exists";
+    public static final String NOT_FOUND_KEY = "category.notExists";
+    public static final String FOUND_KEY = "category.exists";
     @Autowired
     CategoryRepository repository;
 
     @Transactional
     public Category create(@Valid Category category){
         if(category.getId() != null){
-            throw new BadRequestException("category.exists");
+            throw new BadRequestException(FOUND_KEY);
         }
         return repository.save(category);
     }

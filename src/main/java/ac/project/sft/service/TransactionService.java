@@ -24,13 +24,17 @@ import static ac.project.sft.repository.specifications.TransactionSpecifications
 @Validated
 public class TransactionService {
 
+    private static final String EXISTS_KEY = "transaction.exists";
+    private static final String NOT_FOUND_KEY = "transaction.notFound";
+    private static final String AMOUNT_CANT_POSITIVE_KEY = "amount.cantBeNegative";
+    private static final String AMOUNT_CANT_NEGATIVE_KEY = "amount.cantBePositive";
     @Autowired
     TransactionRepository repository;
 
     @Transactional
     public Transaction create(@Valid Transaction transaction){
         if(transaction.getId() != null){
-            throw new BadRequestException("transaction.exists");
+            throw new BadRequestException(EXISTS_KEY);
         }
         checkValidity(transaction);
         return repository.save(transaction);
@@ -38,7 +42,7 @@ public class TransactionService {
 
     @Transactional
     public Transaction update(@Valid Transaction transaction){
-        Transaction db = repository.findById(transaction.getId()).orElseThrow(() -> new NotFoundException("transaction.not.exists"));
+        Transaction db = repository.findById(transaction.getId()).orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY));
         db.setName(transaction.getName());
         db.setCategory(transaction.getCategory());
         db.setNote(transaction.getNote());
@@ -49,10 +53,10 @@ public class TransactionService {
     private static void checkValidity(Transaction transaction){
         if(transaction.getCategory() != null){
             if(!transaction.getCategory().isCanBeNegative() && transaction.getAmount().compareTo(BigDecimal.ZERO) < 0){
-                throw new BadRequestException("amount.cant.be.negative");
+                throw new BadRequestException(AMOUNT_CANT_POSITIVE_KEY);
             }
             if(!transaction.getCategory().isCanBePositive() && transaction.getAmount().compareTo(BigDecimal.ZERO) > 0){
-                throw new BadRequestException("amount.cant.be.positive");
+                throw new BadRequestException(AMOUNT_CANT_NEGATIVE_KEY);
             }
         }
     }
@@ -81,7 +85,7 @@ public class TransactionService {
     }
 
     public Transaction get(Long id){
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("transaction.not.exists"));
+        return repository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY));
     }
 
 }

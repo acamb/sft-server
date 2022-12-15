@@ -18,7 +18,9 @@ import java.util.List;
 @Validated
 public class WalletService {
 
-    public static final String NOT_FOUND_KEY = "wallet.not.found";
+    public static final String NOT_FOUND_KEY = "wallet.notFound";
+    private static final String EXISTS_KEY = "wallet.exists";
+    private static final String NEGATIVE_BALANCE_KEY = "balance.negative";
     @Autowired
     WalletRepository walletRepository;
     @Autowired
@@ -40,7 +42,7 @@ public class WalletService {
     @Transactional
     public UserWallet createWallet(@Valid Wallet wallet, String username){
         if(wallet.getId() != null){
-            throw new BadRequestException("wallet.exists");
+            throw new BadRequestException(EXISTS_KEY);
         }
         wallet = walletRepository.save(wallet);
         return userWalletService.create(wallet,username);
@@ -56,7 +58,7 @@ public class WalletService {
     public Wallet updateBalance(@Valid Wallet wallet, BigDecimal amount){
         wallet.setBalance(wallet.getBalance().add(amount));
         if(wallet.getBalance().compareTo(BigDecimal.ZERO) < 0){
-            throw new BadRequestException("balance.lesser.zero");
+            throw new BadRequestException(NEGATIVE_BALANCE_KEY);
         }
         wallet = walletRepository.save(wallet);
         return wallet;

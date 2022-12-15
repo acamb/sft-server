@@ -27,6 +27,10 @@ import static ac.project.sft.repository.specifications.ScheduledTransactionSpeci
 @Validated
 public class ScheduledTransactionService {
 
+    private static final String RECURRENT_TYPE_NOT_SUPPORTED_KEY = "recurrent.notSupported";
+    private static final String NOT_EXISTS_KEY = "scheduledTransaction.exists";
+    private static final String DOM_NULL_KEY = "dom.isNull";
+    private static final String DOW_NULL_KEY = "dow.isNull";
     @Autowired
     ScheduledTransactionRepository repository;
 
@@ -69,19 +73,19 @@ public class ScheduledTransactionService {
                 return next;
             }
         }
-        throw new IllegalArgumentException("RecurrentType not supported");
+        throw new IllegalArgumentException(RECURRENT_TYPE_NOT_SUPPORTED_KEY);
     }
 
     @Transactional
     public ScheduledTransaction create(@Valid ScheduledTransaction scheduledTransaction){
         if(scheduledTransaction.getId() != null){
-            throw new BadRequestException("scheduledTransaction.exists");
+            throw new BadRequestException(NOT_EXISTS_KEY);
         }
         if(scheduledTransaction.getType() == RecurrentType.MONTHLY && scheduledTransaction.getDayOfMonth() == null){
-            throw new BadRequestException("day.of.month.is.null");
+            throw new BadRequestException(DOM_NULL_KEY);
         }
         if(scheduledTransaction.getType() == RecurrentType.WEEKLY && scheduledTransaction.getDayOfWeek() == null){
-            throw new BadRequestException("day.of.week.is.null");
+            throw new BadRequestException(DOW_NULL_KEY);
         }
         if(scheduledTransaction.getRecurrent() && scheduledTransaction.getRecurrentFrequency() == null){
             scheduledTransaction.setRecurrentFrequency(1);
@@ -132,7 +136,7 @@ public class ScheduledTransactionService {
     }
 
     public ScheduledTransaction get(Long id){
-        return repository.findById(id).orElseThrow(()-> new NotFoundException("scheduledTransaction.not.exists"));
+        return repository.findById(id).orElseThrow(()-> new NotFoundException(NOT_EXISTS_KEY));
     }
 
     public List<ScheduledTransaction> getScheduledTransactionToBeExecuted(LocalDate startDate){
