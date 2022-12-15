@@ -1,4 +1,8 @@
-1.0.0 XX/XX/2022
+1.1.0 15/12/2022
+ - paginations and filters on transaction/scheduled
+ - error messages
+
+1.0.0 03/12/2022
  - 'scheduled' information on transaction created by scheduled transactions
  - positive/negative amounts in a transaction are now checked agains canBePositive/canBeNegative
    in the category if present
