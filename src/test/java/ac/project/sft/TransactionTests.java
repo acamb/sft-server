@@ -47,7 +47,7 @@ public class TransactionTests {
             Transaction t = createTransaction(user,result.getWallet(),""+i,LocalDate.now().plus(i, ChronoUnit.DAYS));
             transactionService.create(t);
         }
-        SearchTransactionDto search = new SearchTransactionDto();
+        SearchTransactionDto search = SearchTransactionDto.builder().build();
         search.setStartDate(LocalDate.now().plus(1,ChronoUnit.DAYS));
         assertEquals(9,transactionService.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
         search.setEndDate(LocalDate.now().plus(8,ChronoUnit.DAYS));
@@ -65,7 +65,7 @@ public class TransactionTests {
             Transaction t = createTransaction(user,result.getWallet(),""+i,LocalDate.now().plus(i, ChronoUnit.DAYS));
             transactionService.create(t);
         }
-        SearchTransactionDto search = new SearchTransactionDto();
+        SearchTransactionDto search = SearchTransactionDto.builder().build();
         search.setName("%trx%");
         assertEquals(10,transactionService.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
         search.setName("%9");
@@ -89,8 +89,9 @@ public class TransactionTests {
         }
         SearchTransactionDto search = null;
         assertEquals(10,transactionService.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
-        search = new SearchTransactionDto();
-        search.setCategoryDto(c);
+        search = SearchTransactionDto.builder()
+                .categoryDto(c)
+                .build();
         assertEquals(5,transactionService.getAll(result.getWallet(), PageRequest.of(0,100),search).getTotalElements());
     }
 

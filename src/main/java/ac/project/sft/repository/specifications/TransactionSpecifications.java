@@ -42,4 +42,8 @@ public class TransactionSpecifications {
     public static Specification<Transaction> wallet(Wallet wallet){
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("wallet"),wallet);
     }
+
+    public static Specification<Transaction> scheduled(boolean scheduled){
+        return (root,query,criteriaBuilder) -> criteriaBuilder.equal(root.get("scheduled"),scheduled);
+    }
 }

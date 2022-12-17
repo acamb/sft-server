@@ -54,11 +54,11 @@ public class TransactionController {
                                                                          @RequestParam(value = "type",required = false) TransactionType type,
                                                                          @RequestParam(value = "name",required = false) String name,
                                                                          Authentication authentication){
-        SearchTransactionDto search = new SearchTransactionDto();
-        search.setType(type);
-        search.setName(name);
-        search.setStartDate(startDate);
-        search.setEndDate(endDate);
+        SearchTransactionDto search = SearchTransactionDto.builder()
+                .type(type)
+                .name(name)
+                .startDate(startDate)
+                .endDate(endDate).build();
         if(category != null) {
             search.setCategoryDto(new Category());
             search.getCategoryDto().setId(category);

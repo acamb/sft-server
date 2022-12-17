@@ -1,9 +1,6 @@
 package ac.project.sft;
 
-import ac.project.sft.model.ScheduledTransaction;
-import ac.project.sft.model.Transaction;
-import ac.project.sft.model.User;
-import ac.project.sft.model.Wallet;
+import ac.project.sft.model.*;
 import ac.project.sft.repository.UserRepository;
 
 import java.math.BigDecimal;
@@ -29,10 +26,15 @@ public class TestUtils {
     }
 
     public static Transaction createTransaction(BigDecimal amount){
+        return createTransaction(amount,null);
+    }
+
+    public static Transaction createTransaction(BigDecimal amount, Category category){
         Transaction transaction = new Transaction();
         transaction.setDate(LocalDate.now());
         transaction.setAmount(amount);
         transaction.setName("test");
+        transaction.setCategory(category);
         return transaction;
     }
 

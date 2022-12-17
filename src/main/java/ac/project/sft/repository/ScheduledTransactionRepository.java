@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface ScheduledTransactionRepository extends PagingAndSortingRepository<ScheduledTransaction,Long>, JpaSpecificationExecutor {
+public interface ScheduledTransactionRepository extends PagingAndSortingRepository<ScheduledTransaction,Long>, JpaSpecificationExecutor<ScheduledTransaction> {
 
     Page<ScheduledTransaction> findAllByWallet(Wallet wallet, Pageable pageable);
 

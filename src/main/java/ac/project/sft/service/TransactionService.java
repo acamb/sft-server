@@ -6,7 +6,6 @@ import ac.project.sft.exceptions.NotFoundException;
 import ac.project.sft.model.Transaction;
 import ac.project.sft.model.Wallet;
 import ac.project.sft.repository.TransactionRepository;
-import ac.project.sft.repository.specifications.TransactionSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.List;
 
 import static ac.project.sft.repository.specifications.TransactionSpecifications.*;
 
@@ -79,6 +77,8 @@ public class TransactionService {
                     search.getType() != null ? type(search.getType()) : null
             ).and(
                     search.getName() != null ? name(search.getName()) : null
+            ).and(
+                    search.getScheduled() != null ? scheduled(search.getScheduled()) : null
             );
         }
         return repository.findAll(spec,pageable);

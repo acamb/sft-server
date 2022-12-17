@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TransactionRepository extends PagingAndSortingRepository<Transaction,Long>, JpaSpecificationExecutor {
+public interface TransactionRepository extends PagingAndSortingRepository<Transaction,Long>, JpaSpecificationExecutor<Transaction> {
 
     Page<Transaction> findAllByWallet(Wallet wallet, Pageable p);
 
