@@ -1,5 +1,6 @@
 package ac.project.sft.service;
 
+import ac.project.sft.dto.CategoryDto;
 import ac.project.sft.dto.SearchTransactionDto;
 import ac.project.sft.dto.WalletStatisticDto;
 import ac.project.sft.exceptions.BadRequestException;
@@ -46,7 +47,9 @@ public class StatisticsService {
                 Pageable.unpaged(),
                 search
         ).toList();
-
+        final CategoryDto noCategory = new CategoryDto();
+        noCategory.setId(-1L);
+        noCategory.setName("No Category");
         return WalletStatisticDto.builder()
                 .expenses(
                         transactions.stream().map(Transaction::getAmount)
@@ -60,7 +63,7 @@ public class StatisticsService {
                 )
                 .expensesByCategory(
                         transactions.stream().filter(t -> t.getAmount().compareTo(BigDecimal.ZERO) < 0)
-                                .collect( Collectors.toMap(t -> mapper.categoryToDto(t.getCategory()), Transaction::getAmount,BigDecimal::add))
+                                .collect( Collectors.toMap(t -> t.getCategory() != null ? mapper.categoryToDto(t.getCategory()) : noCategory, Transaction::getAmount,BigDecimal::add))
                 )
                 .build();
     }

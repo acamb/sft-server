@@ -183,6 +183,7 @@ public class ManagerService {
             transaction.setCategory(categoryService.get(transactionDto.getCategoryDto().getId()));
         }
         transaction.setNote(transactionDto.getNote());
+        transaction.setScheduled(transactionDto.isScheduled());
         transactionService.update(transaction);
     }
 }

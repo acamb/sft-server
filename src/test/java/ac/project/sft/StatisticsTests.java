@@ -57,13 +57,14 @@ public class StatisticsTests {
             t = createTransaction(BigDecimal.valueOf(-2),c2);
             managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
         }
-        //TODO add 2 transactions without category
+        Transaction t = createTransaction(BigDecimal.valueOf(-1),null);
+        managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(),mapper.transactionToDto(t));
         WalletStatisticDto statisticDto = statisticsService.getStatistics(userWallet.getWallet().getId(),
                 LocalDate.now().minusDays(1),
                 null
                 );
-        assertEquals(BigDecimal.valueOf(-30),statisticDto.getExpenses());
-        assertEquals(2,statisticDto.getExpensesByCategory().keySet().size());
+        assertEquals(BigDecimal.valueOf(-31),statisticDto.getExpenses());
+        assertEquals(3,statisticDto.getExpensesByCategory().keySet().size());
         assertEquals(BigDecimal.valueOf(-10),statisticDto.getExpensesByCategory().get(mapper.categoryToDto(c)));
         assertEquals(BigDecimal.valueOf(-20),statisticDto.getExpensesByCategory().get(mapper.categoryToDto(c2)));
     }
