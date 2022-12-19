@@ -1,3 +1,6 @@
+1.2.0 19/12/2022
+ - Statistics and pie chart for expenses
+
 1.1.0 15/12/2022
  - paginations and filters on transaction/scheduled
  - error messages
