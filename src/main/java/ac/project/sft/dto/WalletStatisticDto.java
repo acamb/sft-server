@@ -17,5 +17,5 @@ public class WalletStatisticDto {
     private BigDecimal expenses;
     private BigDecimal incomes;
     @Builder.Default
-    private Map<CategoryDto,BigDecimal> expensesByCategory = new HashMap<>();
+    private Map<String,BigDecimal> expensesByCategory = new HashMap<>();
 }

@@ -63,7 +63,7 @@ public class StatisticsService {
                 )
                 .expensesByCategory(
                         transactions.stream().filter(t -> t.getAmount().compareTo(BigDecimal.ZERO) < 0)
-                                .collect( Collectors.toMap(t -> t.getCategory() != null ? mapper.categoryToDto(t.getCategory()) : noCategory, Transaction::getAmount,BigDecimal::add))
+                                .collect( Collectors.toMap(t -> (t.getCategory() != null ? mapper.categoryToDto(t.getCategory()) : noCategory).getName(), Transaction::getAmount,BigDecimal::add))
                 )
                 .build();
     }
