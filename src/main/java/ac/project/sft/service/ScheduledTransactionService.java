@@ -143,6 +143,10 @@ public class ScheduledTransactionService {
         return repository.findAllByNextFireLessThanEqual(startDate);
     }
 
+    public List<ScheduledTransaction> getFutureScheduledTransaction(Wallet wallet,LocalDate startDate){
+        return repository.findAllByWalletAndNextFireGreaterThanEqual(wallet,startDate);
+    }
+
     @Transactional
     public ScheduledTransaction schedule(@Valid ScheduledTransaction scheduledTransaction){
         scheduledTransaction.setNextFire(getNextFireDate(scheduledTransaction,LocalDate.now()));

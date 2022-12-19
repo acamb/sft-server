@@ -3,6 +3,7 @@ package ac.project.sft.service;
 import ac.project.sft.dto.SearchTransactionDto;
 import ac.project.sft.exceptions.BadRequestException;
 import ac.project.sft.exceptions.NotFoundException;
+import ac.project.sft.model.IAvgExpense;
 import ac.project.sft.model.Transaction;
 import ac.project.sft.model.Wallet;
 import ac.project.sft.repository.TransactionRepository;
@@ -15,6 +16,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.List;
 
 import static ac.project.sft.repository.specifications.TransactionSpecifications.*;
 
@@ -88,4 +92,11 @@ public class TransactionService {
         return repository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY));
     }
 
+    public BigDecimal getAvgExpensePerMonth(Wallet wallet) {
+        List<IAvgExpense> expenses=  repository.getAvgPerDay(wallet.getId(), LocalDate.now().minusMonths(2),LocalDate.now());
+
+        return expenses.stream()
+                .map(IAvgExpense::getValue)
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO).divide(BigDecimal.valueOf(expenses.size()), RoundingMode.HALF_UP);
+    }
 }

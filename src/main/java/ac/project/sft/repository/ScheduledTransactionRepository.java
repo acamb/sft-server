@@ -17,4 +17,5 @@ public interface ScheduledTransactionRepository extends PagingAndSortingReposito
     Page<ScheduledTransaction> findAllByWallet(Wallet wallet, Pageable pageable);
 
     List<ScheduledTransaction> findAllByNextFireLessThanEqual(LocalDate date);
+    List<ScheduledTransaction> findAllByWalletAndNextFireGreaterThanEqual(Wallet wallet,LocalDate date);
 }
