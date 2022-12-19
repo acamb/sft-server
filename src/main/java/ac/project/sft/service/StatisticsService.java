@@ -87,14 +87,25 @@ public class StatisticsService {
         BigDecimal balance = wallet.getBalance();
         WalletPrevisionDto prevision = new WalletPrevisionDto();
         prevision.getPrevision().put(startDate.format(DateTimeFormatter.ISO_DATE),balance);
+        LocalDate lastDate= startDate;
+        BigDecimal avgExpensePerDay = transactionService.getAvgExpensePerMonth(wallet).divide(BigDecimal.valueOf(30), RoundingMode.HALF_UP);
 
         while(scheduled.size() > 0 && scheduled.get(0).getNextFire().isBefore(endDate)){
             ScheduledTransactionDto next = scheduled.remove(0);
             balance = balance.add(next.getAmount());
+
             if(!prevision.getPrevision().containsKey(next.getNextFire().format(DateTimeFormatter.ISO_DATE))){
                 prevision.getPrevision().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),BigDecimal.ZERO);
             }
+            if(!prevision.getEstimated().containsKey(next.getNextFire().format(DateTimeFormatter.ISO_DATE))){
+                prevision.getEstimated().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),BigDecimal.ZERO);
+            }
+
             prevision.getPrevision().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),balance);
+            long days = DAYS.between(lastDate,next.getNextFire());
+            prevision.getEstimated().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),balance.add(avgExpensePerDay.multiply(BigDecimal.valueOf(days))));
+            lastDate = next.getNextFire();
+
             next.setNextFire(ScheduledTransactionService.getNextFireDate(mapper.dtoToScheduledTransaction(next),next.getNextFire()));
             if(next.getNextFire().isBefore(endDate)){
                 scheduled.add(next);
@@ -102,7 +113,7 @@ public class StatisticsService {
             }
         }
 
-        BigDecimal avgExpensePerDay = transactionService.getAvgExpensePerMonth(wallet).divide(BigDecimal.valueOf(30), RoundingMode.HALF_UP);
+
         long days = DAYS.between(startDate,endDate);
         prevision.setEndBalanceEstimated(balance.add(avgExpensePerDay.multiply(BigDecimal.valueOf(days))));
 

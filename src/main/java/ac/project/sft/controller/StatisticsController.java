@@ -1,5 +1,6 @@
 package ac.project.sft.controller;
 
+import ac.project.sft.dto.WalletPrevisionDto;
 import ac.project.sft.dto.WalletStatisticDto;
 import ac.project.sft.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,14 @@ public class StatisticsController {
             @Param("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate
             ){
         return service.getStatistics(wallet,startDate,endDate);
+    }
+
+    @GetMapping("/prevision/{wallet}")
+    public WalletPrevisionDto getPrevision(
+            @PathVariable("wallet") Long wallet,
+            @Param("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+            @Param("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate
+    ){
+        return service.getPrevisions(wallet,startDate,endDate);
     }
 }

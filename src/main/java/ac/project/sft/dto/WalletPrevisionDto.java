@@ -15,5 +15,7 @@ import java.util.Map;
 public class WalletPrevisionDto {
 
     Map<String, BigDecimal> prevision = new HashMap<>();
+
+    Map<String, BigDecimal> estimated = new HashMap<>();
     BigDecimal endBalanceEstimated; //weightened on avg non-scheduled expenses
 }
