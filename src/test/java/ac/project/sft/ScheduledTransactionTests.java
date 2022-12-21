@@ -222,10 +222,11 @@ class ScheduledTransactionTests {
         sc.setType(RecurrentType.MONTHLY);
         sc.setDayOfMonth(31);
         sc.setRecurrentFrequency(1);
-        testDate = LocalDate.of(2022,12,3);
+        testDate = LocalDate.of(2022,2,28);
         result = ScheduledTransactionService.getNextFireDate(sc,testDate);
-        expected = LocalDate.of(2022,12,31);
+        expected = LocalDate.of(2022,3,31);
         assertEquals(expected,result);
+
     }
 
     @Test

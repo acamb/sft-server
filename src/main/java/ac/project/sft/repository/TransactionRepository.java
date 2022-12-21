@@ -21,7 +21,7 @@ public interface TransactionRepository extends PagingAndSortingRepository<Transa
 
     Page<Transaction> findAllByWallet(Wallet wallet, Pageable p);
 
-    @Query(value = "select YEAR(date) year,MONTH(date) date,sum(amount) value from transaction where wallet_id=:walletId and valid = true and date between :startDate and :endDate group by YEAR(date),MONTH(date) ",nativeQuery = true)
+    @Query(value = "select YEAR(date) year,MONTH(date) date,sum(amount) value from transaction where wallet_id=:walletId and valid = true and scheduled != true and date between :startDate and :endDate group by YEAR(date),MONTH(date) ",nativeQuery = true)
     List<IAvgExpense> getAvgPerDay(@Param("walletId") Long walletId,@Param("startDate") LocalDate startDate,@Param("endDate") LocalDate endDate);
 
 }

@@ -62,7 +62,8 @@ public class ScheduledTransactionService {
         }
         if(scheduledTransaction.getType().equals(RecurrentType.MONTHLY)){
             LocalDate next = now;
-            if(now.getDayOfMonth() >= scheduledTransaction.getDayOfMonth()) {
+            LocalDate scheduled = normalizeDate(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());
+            if(now.isAfter(scheduled) || now.isEqual(scheduled)) {
                 next = now.plus(scheduledTransaction.getRecurrentFrequency(), ChronoUnit.MONTHS);
             }
             next = normalizeDate(next.getYear(),next.getMonth().getValue(),scheduledTransaction.getDayOfMonth());

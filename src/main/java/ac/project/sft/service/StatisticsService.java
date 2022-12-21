@@ -91,7 +91,7 @@ public class StatisticsService {
         while(!scheduled.isEmpty() && scheduled.get(0).getNextFire().isBefore(endDate)){
             ScheduledTransactionDto next = scheduled.remove(0);
             balance = balance.add(next.getAmount());
-
+            extimatedBalance = extimatedBalance.add(next.getAmount());
             if(!prevision.getPrevision().containsKey(next.getNextFire().format(DateTimeFormatter.ISO_DATE))){
                 prevision.getPrevision().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),BigDecimal.ZERO);
             }
@@ -101,12 +101,12 @@ public class StatisticsService {
 
             prevision.getPrevision().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),balance);
             long days = DAYS.between(lastDate,next.getNextFire());
-            extimatedBalance = balance.add(avgExpensePerDay.multiply(BigDecimal.valueOf(days)));
+            extimatedBalance = extimatedBalance.add(avgExpensePerDay.multiply(BigDecimal.valueOf(days)));
             prevision.getEstimated().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),extimatedBalance);
             lastDate = next.getNextFire();
 
             next.setNextFire(ScheduledTransactionService.getNextFireDate(mapper.dtoToScheduledTransaction(next),next.getNextFire()));
-            if(next.getNextFire().isBefore(endDate)){
+            if(next.getNextFire() != null && next.getNextFire().isBefore(endDate)){
                 scheduled.add(next);
                 scheduled.sort(sortScheduled);
             }
