@@ -6,10 +6,7 @@ import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.Transaction;
 import ac.project.sft.model.Wallet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -85,12 +81,14 @@ public class StatisticsService {
         ).stream().sorted(sortScheduled).collect(toCollection(ArrayList::new));
 
         BigDecimal balance = wallet.getBalance();
+        BigDecimal extimatedBalance = balance;
         WalletPrevisionDto prevision = new WalletPrevisionDto();
         prevision.getPrevision().put(startDate.format(DateTimeFormatter.ISO_DATE),balance);
+        prevision.getEstimated().put(startDate.format(DateTimeFormatter.ISO_DATE),balance);
         LocalDate lastDate= startDate;
         BigDecimal avgExpensePerDay = transactionService.getAvgExpensePerMonth(wallet).divide(BigDecimal.valueOf(30), RoundingMode.HALF_UP);
 
-        while(scheduled.size() > 0 && scheduled.get(0).getNextFire().isBefore(endDate)){
+        while(!scheduled.isEmpty() && scheduled.get(0).getNextFire().isBefore(endDate)){
             ScheduledTransactionDto next = scheduled.remove(0);
             balance = balance.add(next.getAmount());
 
@@ -103,7 +101,8 @@ public class StatisticsService {
 
             prevision.getPrevision().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),balance);
             long days = DAYS.between(lastDate,next.getNextFire());
-            prevision.getEstimated().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),balance.add(avgExpensePerDay.multiply(BigDecimal.valueOf(days))));
+            extimatedBalance = balance.add(avgExpensePerDay.multiply(BigDecimal.valueOf(days)));
+            prevision.getEstimated().put(next.getNextFire().format(DateTimeFormatter.ISO_DATE),extimatedBalance);
             lastDate = next.getNextFire();
 
             next.setNextFire(ScheduledTransactionService.getNextFireDate(mapper.dtoToScheduledTransaction(next),next.getNextFire()));
@@ -113,9 +112,7 @@ public class StatisticsService {
             }
         }
 
-
-        long days = DAYS.between(startDate,endDate);
-        prevision.setEndBalanceEstimated(balance.add(avgExpensePerDay.multiply(BigDecimal.valueOf(days))));
+        prevision.setEndBalanceEstimated(extimatedBalance);
 
         return prevision;
     }
