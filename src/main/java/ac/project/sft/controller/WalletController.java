@@ -31,7 +31,7 @@ public class WalletController {
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserWalletDto> getWallets(Authentication authentication, @RequestParam(value = "type")WalletType type){
+    public List<UserWalletDto> getWallets(Authentication authentication, @RequestParam(value = "type",required = false)WalletType type){
         return mapper.userWalletsToDtos(walletService.getWallets(authentication.getName(),type));
     }
 
