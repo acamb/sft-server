@@ -5,7 +5,6 @@ import ac.project.sft.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 public class TestUtils {
 
@@ -25,8 +24,21 @@ public class TestUtils {
         return newWallet;
     }
 
+    public static Wallet createCryptoTestWallet(BigDecimal balance){
+        Wallet newWallet = new Wallet();
+        newWallet.setBalance(balance);
+        newWallet.setDescription("test");
+        newWallet.setName("test");
+        newWallet.setWalletType(WalletType.CRYPTO);
+        return newWallet;
+    }
+
     public static Transaction createTransaction(BigDecimal amount){
         return createTransaction(amount,null);
+    }
+
+    public static Transaction createCryptoTransaction(BigDecimal amount,CryptoTransactionType type){
+        return createCryptoTransaction(amount,type,null);
     }
 
     public static Transaction createTransaction(BigDecimal amount, Category category){
@@ -35,6 +47,20 @@ public class TestUtils {
         transaction.setAmount(amount);
         transaction.setName("test");
         transaction.setCategory(category);
+        return transaction;
+    }
+
+    public static Transaction createCryptoTransaction(BigDecimal amount,CryptoTransactionType type, Category category){
+        Transaction transaction = new Transaction();
+        transaction.setDate(LocalDate.now());
+        transaction.setAmount(amount);
+        transaction.setName("test");
+        transaction.setCategory(category);
+        CryptoTransaction ct = new CryptoTransaction();
+        ct.setTransactionType(type);
+        ct.setFee(BigDecimal.valueOf(0.1));
+        ct.setBaseValueUsed(BigDecimal.valueOf(1.10));
+        transaction.setCryptoTransaction(ct);
         return transaction;
     }
 

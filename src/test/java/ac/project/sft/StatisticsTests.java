@@ -15,9 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Comparator;
 
@@ -126,7 +124,7 @@ public class StatisticsTests {
         s.setDayOfWeek(LocalDate.now().getDayOfWeek());
         managerService.addScheduled(userWallet.getWallet(),s,user.getUsername());
 
-        WalletPrevisionDto previsionDto = statisticsService.getPrevisions(userWallet.getId(),LocalDate.now(),LocalDate.now().plusWeeks(3));
+        WalletPrevisionDto previsionDto = statisticsService.getPrevisions(userWallet.getWallet().getId(),LocalDate.now(),LocalDate.now().plusWeeks(3));
         //we have both scheduled executed twice, so balance will be 1000-4-15-15 = 966.
         // the endBalanceEstimated will be 966 - ~2 (avg per month) = 964
         String lastTransaction = previsionDto.getPrevision().keySet().stream().sorted(Comparator.reverseOrder()).findFirst().get();

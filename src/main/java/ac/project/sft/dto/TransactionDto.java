@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -18,8 +16,8 @@ public class TransactionDto {
     private BigDecimal previousAmount;
     private CategoryDto categoryDto;
     private String note;
-
     private UserDto userDto;
     private boolean scheduled;
+    CryptoTransactionDto cryptoTransactionDto;
 
 }

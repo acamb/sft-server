@@ -1,5 +1,6 @@
 package ac.project.sft.dto;
 
+import ac.project.sft.model.WalletType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,5 +14,7 @@ public class WalletDto {
     private BigDecimal balance;
     private String name;
     private String description;
+    private WalletType walletType;
+    private CryptoCurrencyDto currency;
 
 }

@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @Validated
@@ -25,6 +24,8 @@ public class ManagerService {
     public static final String NO_GRANTS = "user.has.not.grants";
     @Autowired
     TransactionService transactionService;
+    @Autowired
+    CryptoTransactionService cryptoTransactionService;
     @Autowired
     WalletService walletService;
     @Autowired
@@ -40,14 +41,22 @@ public class ManagerService {
     public void addTransaction(Long walletId, String username,TransactionDto transactionDto){
         UserWallet userWallet = walletService.getWallet(walletId,username);
         if(canWrite(userWallet)){
-            addTransaction(userWallet.getWallet(),mapper.dtoToTransaction(transactionDto),userWallet.getUser());
+            CryptoTransaction cryptoTransaction = null;
+            Transaction transaction = mapper.dtoToTransaction(transactionDto);
+            if(userWallet.getWallet().getWalletType().equals(WalletType.CRYPTO)){
+                cryptoTransaction = mapper.dtoToCryptoTransaction(transactionDto.getCryptoTransactionDto());
+                cryptoTransaction.setFiatValue(transaction.getAmount().multiply(cryptoTransaction.getBaseValueUsed()));
+                cryptoTransaction= cryptoTransactionService.create(cryptoTransaction);
+                transaction.setCryptoTransaction(cryptoTransaction);
+            }
+            addTransaction(userWallet.getWallet(),transaction,userWallet.getUser());
         }
         else{
             throw new NotAuthorizedException(NO_GRANTS);
         }
     }
 
-    private void addTransaction(@Valid Wallet wallet,@Valid Transaction transaction,@Valid User user){
+    private Transaction addTransaction(@Valid Wallet wallet,@Valid Transaction transaction,@Valid User user){
         transaction.setPreviousAmount(wallet.getBalance());
         transaction.setUser(user);
         transaction.setWallet(wallet);
@@ -56,6 +65,7 @@ public class ManagerService {
         }
         transaction = transactionService.create(transaction);
         walletService.updateBalance(wallet,transaction.getAmount());
+        return transaction;
     }
 
     @Transactional
@@ -64,6 +74,9 @@ public class ManagerService {
         if(canWrite(userWallet)){
             Transaction transaction = transactionService.get(transactionDto.getId());
             walletService.updateBalance(userWallet.getWallet(),transaction.getAmount().multiply(BigDecimal.valueOf(-1)));
+            if(userWallet.getWallet().getWalletType().equals(WalletType.CRYPTO)){
+                cryptoTransactionService.delete(mapper.dtoToCryptoTransaction(transactionDto.getCryptoTransactionDto()));
+            }
             transactionService.delete(transaction);
         }
         else{
@@ -185,5 +198,10 @@ public class ManagerService {
         transaction.setNote(transactionDto.getNote());
         transaction.setScheduled(transactionDto.isScheduled());
         transactionService.update(transaction);
+        if(transactionDto.getCryptoTransactionDto() != null && transactionDto.getCryptoTransactionDto().getId() != null) {
+            CryptoTransaction cryptoTransaction = mapper.dtoToCryptoTransaction(transactionDto.getCryptoTransactionDto());
+            cryptoTransaction.setFiatValue(transaction.getAmount().multiply(cryptoTransaction.getBaseValueUsed()));
+            cryptoTransactionService.update(cryptoTransaction);
+        }
     }
 }

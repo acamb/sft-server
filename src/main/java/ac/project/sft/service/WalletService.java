@@ -2,14 +2,15 @@ package ac.project.sft.service;
 
 import ac.project.sft.exceptions.BadRequestException;
 import ac.project.sft.exceptions.NotFoundException;
-import ac.project.sft.mappers.DtoMapper;
-import ac.project.sft.model.Wallet;
 import ac.project.sft.model.UserWallet;
+import ac.project.sft.model.Wallet;
+import ac.project.sft.model.WalletType;
 import ac.project.sft.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,7 +37,11 @@ public class WalletService {
     }
 
     public List<UserWallet> getWallets(String username){
-        return userWalletService.getWallets(username);
+        return getWallets(username,null);
+    }
+
+    public List<UserWallet> getWallets(String username, WalletType type){
+        return userWalletService.getWallets(username,type);
     }
 
     @Transactional

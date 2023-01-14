@@ -29,4 +29,8 @@ public class Wallet {
     @NotBlank
     private String name;
     private boolean valid = true;
+    @Enumerated(EnumType.STRING)
+    private WalletType walletType = WalletType.FIAT;
+    @ManyToOne
+    private CryptoCurrency currency;
 }

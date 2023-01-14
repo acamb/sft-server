@@ -5,6 +5,7 @@ import ac.project.sft.exceptions.NotFoundException;
 import ac.project.sft.model.Wallet;
 import ac.project.sft.model.User;
 import ac.project.sft.model.UserWallet;
+import ac.project.sft.model.WalletType;
 import ac.project.sft.repository.UserWalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,9 +44,12 @@ public class UserWalletService {
         repository.delete(userWallet);
     }
 
-    List<UserWallet> getWallets(String username){
+    List<UserWallet> getWallets(String username, WalletType type){
         User user = userService.findByUsername(username);
-        return repository.findAllByUser(user).stream().filter(a -> a.getRead() || a.getOwner()).toList();
+        return repository.findAllByUser(user).stream()
+                .filter(a -> a.getRead() || a.getOwner())
+                .filter(w -> type == null || w.getWallet().getWalletType().equals(type))
+                .toList();
     }
 
     @Transactional

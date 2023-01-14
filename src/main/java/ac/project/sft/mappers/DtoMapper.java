@@ -13,6 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface DtoMapper {
     @BeanMapping(ignoreByDefault = false)
+    @Mapping(source="currency",target="currency")
     WalletDto walletToDto(Wallet wallet);
     @BeanMapping(ignoreByDefault = false)
     CategoryDto categoryToDto(Category category);
@@ -27,6 +28,7 @@ public interface DtoMapper {
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="category",target="categoryDto")
     @Mapping(source="user",target="userDto")
+    @Mapping(source="cryptoTransaction",target="cryptoTransactionDto")
     TransactionDto transactionToDto(Transaction transaction);
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="wallet",target="walletDto")
@@ -43,6 +45,7 @@ public interface DtoMapper {
     List<UserDto> userListToDto(List<User> user);
 
     @BeanMapping(ignoreByDefault = false)
+    @Mapping(source="currency",target="currency")
     Wallet dtoToWallet(WalletDto wallet);
     @BeanMapping(ignoreByDefault = false)
     Category dtoToCategory(CategoryDto category);
@@ -53,6 +56,7 @@ public interface DtoMapper {
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source="categoryDto",target="category")
     @Mapping(source="userDto",target="user")
+    @Mapping(source="cryptoTransactionDto",target="cryptoTransaction")
     Transaction dtoToTransaction(TransactionDto transaction);
     @BeanMapping(ignoreByDefault = false)
     @Mapping(source = "walletDto",target="wallet")
@@ -64,6 +68,18 @@ public interface DtoMapper {
     List<TransactionDto> transactionListToDto(List<Transaction> all);
     @BeanMapping(ignoreByDefault = false)
     List<ScheduledTransactionDto> scheduledTransactionListToDto(List<ScheduledTransaction> scheduledTransactionList);
+
+    @BeanMapping(ignoreByDefault = false)
+    CryptoTransactionDto cryptoTransactionToDto(CryptoTransaction transaction);
+
+    @BeanMapping(ignoreByDefault = false)
+    CryptoTransaction dtoToCryptoTransaction(CryptoTransactionDto transaction);
+
+    @BeanMapping(ignoreByDefault = false)
+    CryptoCurrencyDto cryptoTransactionToDto(CryptoCurrency currency);
+
+    @BeanMapping(ignoreByDefault = false)
+    CryptoCurrency dtoToCryptoCurrency(CryptoCurrencyDto currency);
 
     default Integer map(DayOfWeek day){
         return day == null ? null :day.getValue();

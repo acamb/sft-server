@@ -471,5 +471,58 @@ class ManagerIntegrationTests {
         assertEquals(1, managerService.getAllScheduled(wallet.getId(), user.getUsername(), PageRequest.of(0,25)).getTotalElements());
     }
 
+    @Test
+    void addCryptoTransaction(){
+        User user = createTestUser(null,userRepository);
+        Wallet wallet = createCryptoTestWallet(BigDecimal.valueOf(10));
+        UserWallet userWallet = walletService.createWallet(wallet,user.getUsername());
+
+        Transaction t = createCryptoTransaction(BigDecimal.valueOf(20),CryptoTransactionType.BUY);
+        managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
+
+        wallet = walletService.getWallet(userWallet.getWallet().getId());
+        assertEquals(BigDecimal.valueOf(30), wallet.getBalance());
+        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
+        assertEquals(t.getPreviousAmount(), BigDecimal.valueOf(10));
+        assertEquals(t.getCryptoTransaction().getTaxable(),true);
+        assertEquals(t.getCryptoTransaction().getFiatValue(),BigDecimal.valueOf(22.0));
+        assertEquals(t.getUser().getUsername(), user.getUsername());
+    }
+
+    @Test
+    void addCryptoTransactionNoTax(){
+        User user = createTestUser(null,userRepository);
+        Wallet wallet = createCryptoTestWallet(BigDecimal.valueOf(10));
+        UserWallet userWallet = walletService.createWallet(wallet,user.getUsername());
+
+        Transaction t = createCryptoTransaction(BigDecimal.valueOf(20),CryptoTransactionType.TRANSFER);
+        managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
+
+        wallet = walletService.getWallet(userWallet.getWallet().getId());
+        assertEquals(BigDecimal.valueOf(30), wallet.getBalance());
+        assertEquals(1, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
+        assertEquals(t.getPreviousAmount(), BigDecimal.valueOf(10));
+        assertEquals(t.getCryptoTransaction().getTaxable(),false);
+        assertEquals(t.getCryptoTransaction().getFiatValue(),BigDecimal.valueOf(22.0));
+        assertEquals(t.getUser().getUsername(), user.getUsername());
+    }
+
+    @Test
+    void removeCryptoTransaction(){
+        User user = createTestUser(null,userRepository);
+        Wallet wallet = createCryptoTestWallet(BigDecimal.valueOf(10));
+        UserWallet userWallet = walletService.createWallet(wallet,user.getUsername());
+        Transaction t = createCryptoTransaction(BigDecimal.valueOf(20),CryptoTransactionType.BUY);
+        managerService.addTransaction(userWallet.getWallet().getId(),user.getUsername(), mapper.transactionToDto(t));
+        t = managerService.getAllTransactions(wallet,user.getUsername(), PageRequest.of(0,25)).toList().get(0);
+        managerService.removeTransaction(userWallet.getWallet().getId(),user.getUsername(),mapper.transactionToDto(t));
+
+        wallet = walletService.getWallet(userWallet.getWallet().getId());
+        assertEquals(BigDecimal.valueOf(10), wallet.getBalance());
+        assertEquals(0, managerService.getAllTransactions(wallet, user.getUsername(), PageRequest.of(0,25)).getTotalElements());
+    }
+
 
 }

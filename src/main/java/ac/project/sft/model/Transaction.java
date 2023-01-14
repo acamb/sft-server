@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -42,5 +41,8 @@ public class Transaction {
     private Wallet wallet;
     private boolean valid = true;
     private boolean scheduled = false;
+
+    @OneToOne
+    private CryptoTransaction cryptoTransaction;
 
 }

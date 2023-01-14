@@ -5,6 +5,7 @@ import ac.project.sft.controller.payloads.request.DeleteWalletAssociationPayload
 import ac.project.sft.dto.WalletDto;
 import ac.project.sft.dto.UserWalletDto;
 import ac.project.sft.mappers.DtoMapper;
+import ac.project.sft.model.WalletType;
 import ac.project.sft.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class WalletController {
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserWalletDto> getWallets(Authentication authentication){
-        return mapper.userWalletsToDtos(walletService.getWallets(authentication.getName()));
+    public List<UserWalletDto> getWallets(Authentication authentication, @RequestParam(value = "type")WalletType type){
+        return mapper.userWalletsToDtos(walletService.getWallets(authentication.getName(),type));
     }
 
     @PostMapping("/")
