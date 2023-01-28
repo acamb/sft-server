@@ -16,7 +16,7 @@ public class CryptoTransaction {
     private Long id;
     @Version
     private Long version;
-    private BigDecimal baseValueUsed; //TODO better naming
+    private BigDecimal price;
     private BigDecimal fiatValue;
     private BigDecimal fee;
     private Boolean taxable;

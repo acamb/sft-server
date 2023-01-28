@@ -40,7 +40,7 @@ public class CryptoTransactionService {
         db.setFee(transaction.getFee());
         db.setTaxable(transaction.getTaxable());
         db.setTransactionType(transaction.getTransactionType());
-        db.setBaseValueUsed(transaction.getBaseValueUsed());
+        db.setPrice(transaction.getPrice());
         db.setFiatValue(transaction.getFiatValue());
         return repository.save(db);
     }

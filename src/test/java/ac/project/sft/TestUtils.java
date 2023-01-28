@@ -59,7 +59,7 @@ public class TestUtils {
         CryptoTransaction ct = new CryptoTransaction();
         ct.setTransactionType(type);
         ct.setFee(BigDecimal.valueOf(0.1));
-        ct.setBaseValueUsed(BigDecimal.valueOf(1.10));
+        ct.setPrice(BigDecimal.valueOf(1.10));
         transaction.setCryptoTransaction(ct);
         return transaction;
     }

@@ -45,7 +45,7 @@ public class ManagerService {
             Transaction transaction = mapper.dtoToTransaction(transactionDto);
             if(userWallet.getWallet().getWalletType().equals(WalletType.CRYPTO)){
                 cryptoTransaction = mapper.dtoToCryptoTransaction(transactionDto.getCryptoTransactionDto());
-                cryptoTransaction.setFiatValue(transaction.getAmount().multiply(cryptoTransaction.getBaseValueUsed()));
+                cryptoTransaction.setFiatValue(transaction.getAmount().multiply(cryptoTransaction.getPrice()));
                 cryptoTransaction= cryptoTransactionService.create(cryptoTransaction);
                 transaction.setCryptoTransaction(cryptoTransaction);
             }
@@ -200,7 +200,7 @@ public class ManagerService {
         transactionService.update(transaction);
         if(transactionDto.getCryptoTransactionDto() != null && transactionDto.getCryptoTransactionDto().getId() != null) {
             CryptoTransaction cryptoTransaction = mapper.dtoToCryptoTransaction(transactionDto.getCryptoTransactionDto());
-            cryptoTransaction.setFiatValue(transaction.getAmount().multiply(cryptoTransaction.getBaseValueUsed()));
+            cryptoTransaction.setFiatValue(transaction.getAmount().multiply(cryptoTransaction.getPrice()));
             cryptoTransactionService.update(cryptoTransaction);
         }
     }
