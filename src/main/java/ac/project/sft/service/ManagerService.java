@@ -198,6 +198,7 @@ public class ManagerService {
         transaction.setNote(transactionDto.getNote());
         transaction.setScheduled(transactionDto.isScheduled());
         transactionService.update(transaction);
+        //TODO : you can update a crypto trx only if you haven't selled any amount yet (gains calculation)
         if(transactionDto.getCryptoTransactionDto() != null && transactionDto.getCryptoTransactionDto().getId() != null) {
             CryptoTransaction cryptoTransaction = mapper.dtoToCryptoTransaction(transactionDto.getCryptoTransactionDto());
             cryptoTransaction.setFiatValue(transaction.getAmount().multiply(cryptoTransaction.getPrice()));

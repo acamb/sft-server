@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 
 @Component
 public class LoggingInterceptor implements MethodInterceptor {
@@ -47,8 +48,11 @@ public class LoggingInterceptor implements MethodInterceptor {
         for(int i = 0;i<arguments.length;i++){
             Object arg = arguments[i];
             try {
-                //TODO annotation to exlude fields from serialization
-                sb.append("[index: ").append(i).append(",value: ").append(jsonMapper.writeValueAsString(arg)).append("]").append("\n");
+                String value = "***";
+                if(Arrays.stream(parameterAnnotations[i]).noneMatch(p -> p.annotationType() == DontLog.class)){
+                    value = jsonMapper.writeValueAsString(arg);
+                }
+                sb.append("[index: ").append(i).append(",value: ").append(value).append("]").append("\n");
             } catch (JsonProcessingException e) {
                 sb.append("[index: ").append(i).append(", value{Not serializable}]").append("\n");
                 logger.warn("Exception serializing argument",e);

@@ -51,9 +51,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(claims.getExpiration().before(new Date())){
             return false;
         }
-        if(userDetails == null || !claims.getSubject().equals(userDetails.getUsername())){
-            return false;
-        }
-        return true;
+        return userDetails != null && claims.getSubject().equals(userDetails.getUsername());
     }
 }

@@ -14,6 +14,10 @@ import java.time.LocalDate;
 
 public class TransactionSpecifications {
 
+    private TransactionSpecifications(){
+
+    }
+
     public static Specification<Transaction> startDate(LocalDate date){
         return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("date"),date);
     }

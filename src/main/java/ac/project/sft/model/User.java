@@ -1,5 +1,6 @@
 package ac.project.sft.model;
 
+import ac.project.sft.configuration.DontLog;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -23,6 +24,7 @@ public class User {
     @NotBlank
     private String username;
     @NotBlank
+    @DontLog
     private String password;
     private boolean valid = true;
 

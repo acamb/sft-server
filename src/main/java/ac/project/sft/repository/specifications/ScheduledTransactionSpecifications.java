@@ -11,6 +11,10 @@ import java.time.LocalDate;
 
 public class ScheduledTransactionSpecifications {
 
+    private ScheduledTransactionSpecifications(){
+
+    }
+
     public static Specification<ScheduledTransaction> startDate(LocalDate date){
         return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("date"),date);
     }
