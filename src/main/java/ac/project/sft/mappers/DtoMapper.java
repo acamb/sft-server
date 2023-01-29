@@ -22,6 +22,8 @@ public interface DtoMapper {
     List<CategoryDto> categoryListToDto(List<Category> category);
 
     @BeanMapping(ignoreByDefault = false)
+    List<CryptoCurrencyDto> cryptoCurrencyListToDto(List<CryptoCurrency> cryptoCurrency);
+    @BeanMapping(ignoreByDefault = false)
     @Mapping(source="category",target="categoryDto")
     @Mapping(source="recurrent",target="recurrent",defaultValue = "false")
     ScheduledTransactionDto scheduledTransactionToDto(ScheduledTransaction scheduledTransaction);
@@ -76,7 +78,7 @@ public interface DtoMapper {
     CryptoTransaction dtoToCryptoTransaction(CryptoTransactionDto transaction);
 
     @BeanMapping(ignoreByDefault = false)
-    CryptoCurrencyDto cryptoTransactionToDto(CryptoCurrency currency);
+    CryptoCurrencyDto cryptoCurrencyToDto(CryptoCurrency currency);
 
     @BeanMapping(ignoreByDefault = false)
     CryptoCurrency dtoToCryptoCurrency(CryptoCurrencyDto currency);

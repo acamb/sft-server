@@ -15,5 +15,5 @@ public class CryptoCurrency {
     @Version
     Long version;
     String name;
-    String code;
+    String ticker;
 }

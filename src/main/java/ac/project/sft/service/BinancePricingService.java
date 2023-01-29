@@ -10,8 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -33,10 +31,10 @@ public class BinancePricingService implements ICryptoPricingService{
     }
 
     @Override
-    @Cacheable(key = "#a0.code")
+    @Cacheable(key = "#a0.ticker")
     public BigDecimal getCurrentPrice(CryptoCurrency currency) {
         //TODO[AC] parametrize fiat
-        Map<String,String> uriVariables = Map.of("symbol", currency.getCode()+"EUR");
+        Map<String,String> uriVariables = Map.of("symbol", currency.getTicker()+"EUR");
         String request = UriComponentsBuilder.fromHttpUrl(apiUrl + CURRENT_PRICE_API_PATH)
                 .queryParam("symbol","{symbol}")
                 .encode()
@@ -45,11 +43,11 @@ public class BinancePricingService implements ICryptoPricingService{
     }
 
     @Override
-    @Cacheable(key = "#a0.code-#a1.toEpochDay()")
+    @Cacheable(key = "#a0.ticker-#a1.toEpochDay()")
     public BigDecimal getHistoricalPrice(CryptoCurrency currency, LocalDate date) {
         //TODO[AC] parametrize fiat
         Map<String,String> uriVariables = Map.of(
-                "symbol",currency.getCode()+"EUR",
+                "symbol",currency.getTicker()+"EUR",
                 "interval","1d",
                 "startTime",""+date.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
                 "endTime",""+date.atTime(LocalTime.of(23,59,59)).toInstant(ZoneOffset.UTC).toEpochMilli(),

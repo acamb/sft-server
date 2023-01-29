@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class CryptoTransactionDto{
         private Long id;
         private Long version;
-        private BigDecimal baseValueUsed; //TODO better naming
+        private BigDecimal price; //TODO better naming
         private BigDecimal fiatValue;
         private BigDecimal fee;
         private Boolean taxable;
