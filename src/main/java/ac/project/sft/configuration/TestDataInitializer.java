@@ -4,10 +4,7 @@ import ac.project.sft.dto.ScheduledTransactionDto;
 import ac.project.sft.dto.TransactionDto;
 import ac.project.sft.mappers.DtoMapper;
 import ac.project.sft.model.*;
-import ac.project.sft.service.CategoryService;
-import ac.project.sft.service.ManagerService;
-import ac.project.sft.service.UserService;
-import ac.project.sft.service.WalletService;
+import ac.project.sft.service.*;
 import net.bytebuddy.asm.Advice;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +39,9 @@ public class TestDataInitializer implements CommandLineRunner {
 
     @Autowired
     DtoMapper mapper;
+
+    @Autowired
+    CryptoCurrencyService cryptoCurrencyService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -81,6 +81,19 @@ public class TestDataInitializer implements CommandLineRunner {
                 scheduledTransactionDto.setRecurrent(false);
                 managerService.addScheduled(userWallet.getWallet(), scheduledTransactionDto,user.getUsername());
             }
+            //
+            CryptoCurrency crypto = new CryptoCurrency();
+            crypto.setName("BTC");
+            crypto.setTicker("BTC");
+            crypto = cryptoCurrencyService.create(crypto);
+            Wallet walletC = new Wallet();
+            walletC.setName("test c");
+            walletC.setBalance(BigDecimal.valueOf(1));
+            walletC.setDescription("test wallet crypto");
+            walletC.setWalletType(WalletType.CRYPTO);
+            walletC.setCurrency(crypto);
+            UserWallet userWallet2 = walletService.createWallet(walletC,user.getUsername());
+
         }
     }
 }

@@ -9,5 +9,5 @@ public class CryptoCurrencyDto {
     Long id;
     Long version;
     String name;
-    String code;
+    String ticker;
 }

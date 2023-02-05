@@ -28,7 +28,7 @@ public class CryptoWalletController {
         return new CryptoWalletInfoResponse(
         Arrays.stream(ids.split(","))
                 .map(s -> walletService.getWallet(Long.parseLong(s),authentication.getName()))
-                .map(w -> new CryptoWalletInfoResponse.CryptoWalletInfo(w.getId(),pricingService.getCurrentPrice(w.getWallet().getCurrency())))
+                .map(w -> new CryptoWalletInfoResponse.CryptoWalletInfo(w.getId(),pricingService.getCurrentPrice(w.getWallet().getCurrency()).multiply(w.getWallet().getBalance())))
                 .toList()
         );
     }
