@@ -49,7 +49,7 @@ public class LoggingInterceptor implements MethodInterceptor {
             Object arg = arguments[i];
             try {
                 String value = "***";
-                if(Arrays.stream(parameterAnnotations[i]).noneMatch(p -> p.annotationType() == DontLog.class)){
+                if(parameterAnnotations != null && Arrays.stream(parameterAnnotations[i]).noneMatch(p -> p.annotationType() == DontLog.class)){
                     value = jsonMapper.writeValueAsString(arg);
                 }
                 sb.append("[index: ").append(i).append(",value: ").append(value).append("]").append("\n");
