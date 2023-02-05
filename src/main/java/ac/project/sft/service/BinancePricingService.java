@@ -39,6 +39,7 @@ public class BinancePricingService implements ICryptoPricingService{
                 .queryParam("symbol","{symbol}")
                 .encode()
                 .toUriString();
+        //TODO check against BUSD and then BUSD/EUR if the ticker has no match
         return restTemplate.getForObject(request,CurrentPriceResponse.class,uriVariables).getPrice();
     }
 
