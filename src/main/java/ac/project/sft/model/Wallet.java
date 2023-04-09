@@ -23,6 +23,7 @@ public class Wallet {
     @Version
     private Long version;
     @Min(value = 0)
+    @Column(name = "balance", precision = 19, scale = 10, columnDefinition="DECIMAL(19,10)")
     private BigDecimal balance;
     @NotBlank
     private String description;
